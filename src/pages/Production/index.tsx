@@ -12,6 +12,7 @@ import { Input, Textarea } from '@/components/ui/Input';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { UnitSelect } from '@/components/shared/UnitSelect';
+import { ImageUpload } from '@/components/shared/ImageUpload';
 import { useProductionStore } from '@/store/productionStore';
 import { useFicheTechnicStore, type FicheTechnic } from '@/store/ficheTechnicStore';
 import { useStockStore } from '@/store/stockStore';
@@ -119,8 +120,13 @@ export default function ProductionPage() {
               {filteredProductions.map((p, i) => (
                 <Card key={p.id} index={i} hoverable className="flex flex-col border border-gold/10 hover:border-gold/30">
                   <div className="flex justify-between items-start mb-1 gap-2">
-                    <h3 className="font-display font-semibold text-text-primary text-base">{p.name}</h3>
-                    {p.categoryName && <Badge variant="info" className="bg-gold/10 text-gold-dark border-0">{p.categoryName}</Badge>}
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="h-12 w-12 shrink-0 rounded-xl bg-vanilla/60 border border-gold/15 flex items-center justify-center overflow-hidden">
+                        {p.image ? <img src={p.image} alt={p.name} className="h-full w-full object-cover" /> : <CakeSlice size={20} className="text-gold/40" />}
+                      </div>
+                      <h3 className="font-display font-semibold text-text-primary text-base truncate">{p.name}</h3>
+                    </div>
+                    {p.categoryName && <Badge variant="info" className="bg-gold/10 text-gold-dark border-0 shrink-0">{p.categoryName}</Badge>}
                   </div>
                   <p className="text-xs text-text-muted flex items-center gap-1 mb-2"><Clock size={12} /> {formatDate(p.date, language)} — {p.hour}</p>
                   {p.description && <p className="text-xs text-text-secondary mb-3 line-clamp-2 italic">« {p.description} »</p>}
@@ -164,8 +170,13 @@ export default function ProductionPage() {
               {filteredFicheTechnics.map((ft, i) => (
                 <Card key={ft.id} index={i} hoverable className="flex flex-col border border-gold/10 hover:border-gold/30 bg-gradient-to-br from-white to-vanilla/5">
                   <div className="flex justify-between items-start mb-1 gap-2">
-                    <h3 className="font-display font-semibold text-text-primary text-base">{ft.name}</h3>
-                    <Badge variant="warning" className="bg-caramel/10 text-caramel border-0">{ft.categoryName}</Badge>
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="h-12 w-12 shrink-0 rounded-xl bg-vanilla/60 border border-gold/15 flex items-center justify-center overflow-hidden">
+                        {ft.image ? <img src={ft.image} alt={ft.name} className="h-full w-full object-cover" /> : <FileText size={20} className="text-gold/40" />}
+                      </div>
+                      <h3 className="font-display font-semibold text-text-primary text-base truncate">{ft.name}</h3>
+                    </div>
+                    <Badge variant="warning" className="bg-caramel/10 text-caramel border-0 shrink-0">{ft.categoryName}</Badge>
                   </div>
                   <p className="text-[10px] text-text-muted mb-2">Créé le {formatDate(ft.createdAt, language)}</p>
                   {ft.description && <p className="text-xs text-text-muted mb-3 line-clamp-2">{ft.description}</p>}
@@ -474,6 +485,7 @@ function FicheTechnicForm({ initial, onClose }: { initial?: FicheTechnic; onClos
   const { categories, addCategory, deleteCategory, addFicheTechnic, updateFicheTechnic, ficheTechnics } = useFicheTechnicStore();
 
   const [name, setName] = useState(initial?.name ?? '');
+  const [image, setImage] = useState<string | null>(initial?.image ?? null);
   const [description, setDescription] = useState(initial?.description ?? '');
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? '');
   const [ingredientSearch, setIngredientSearch] = useState('');
@@ -622,6 +634,7 @@ function FicheTechnicForm({ initial, onClose }: { initial?: FicheTechnic; onClos
 
     const data = {
       name: name.trim(),
+      image: image || null,
       categoryId,
       categoryName,
       description: description.trim(),
@@ -657,6 +670,8 @@ function FicheTechnicForm({ initial, onClose }: { initial?: FicheTechnic; onClos
           <h4 className="font-display font-semibold text-gold-dark text-sm border-b border-gold/5 pb-1">1. Informations Générales</h4>
           
           <Input label="Nom de Produit *" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex: Tarte au Citron" />
+
+          <ImageUpload label="Image du produit" value={image} onChange={setImage} />
 
           <div className="flex items-end gap-2">
             <Select label="Catégorie *" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}
@@ -902,6 +917,7 @@ function CreateProductionForm({ onClose, onSubmit }: { onClose: () => void; onSu
 
     onSubmit({
       name: selectedFt.name,
+      image: selectedFt.image || null,
       description: selectedFt.description || '',
       date: todayISO(),
       hour: nowTime(),

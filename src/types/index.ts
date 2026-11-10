@@ -31,6 +31,8 @@ export interface Product {
   id: string;
   name: string;
   description: string;
+  // Optional product image, stored as a base64 data URL.
+  image?: string | null;
   barcode: string;
   marqueId: string;
   categoryId: string;
@@ -146,6 +148,8 @@ export interface Production {
   id: string;
   name: string;
   description: string;
+  // Optional product image (inherited from the fiche technique), base64 data URL.
+  image?: string | null;
   date: string;
   hour: string;
   // Production category (independent list, managed in Production)
@@ -168,6 +172,8 @@ export interface ComptoirItem {
   id: string;
   productionId: string;
   productName: string;
+  // Optional product image (inherited from the production), base64 data URL.
+  image?: string | null;
   description?: string;
   quantity: number;
   unitPrice: number;

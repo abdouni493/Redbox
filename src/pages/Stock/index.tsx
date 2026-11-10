@@ -157,6 +157,11 @@ export default function Stock() {
       <Modal open={!!viewing} onClose={() => setViewing(null)} title={viewing?.name} size="md">
         {viewing && (
           <div className="space-y-4">
+            {viewing.image && (
+              <div className="flex justify-center">
+                <img src={viewing.image} alt={viewing.name} className="max-h-48 rounded-2xl border border-gold/15 object-contain" />
+              </div>
+            )}
             <p className="text-sm text-text-secondary">{viewing.description}</p>
             <div className="grid grid-cols-2 gap-3">
               <DetailRow label={t('marque')} value={marqueName(viewing.marqueId)} />

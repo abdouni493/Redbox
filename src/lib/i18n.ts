@@ -70,6 +70,7 @@ export const translations = {
     // Stock
     newProduct: 'Nouveau produit',
     productName: 'Nom du produit',
+    image: 'Image',
     barcode: 'Code-barres',
     marque: 'Marque',
     category: 'Catégorie',
@@ -393,6 +394,7 @@ export const translations = {
     accountCreated: 'تم إنشاء الحساب بنجاح!',
     newProduct: 'منتج جديد',
     productName: 'اسم المنتج',
+    image: 'صورة',
     barcode: 'الباركود',
     marque: 'العلامة التجارية',
     category: 'الفئة',

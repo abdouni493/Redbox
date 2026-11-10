@@ -1,4 +1,4 @@
-import { Eye, Pencil, Trash2, User, Barcode } from 'lucide-react';
+import { Eye, Pencil, Trash2, User, Barcode, Package } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -28,9 +28,18 @@ export function ProductCard({ product, index, marque, category, onView, onEdit, 
   return (
     <Card index={index} hoverable className="flex flex-col border border-gold/10 hover:border-gold/30 transition-all duration-300 shadow-sm hover:shadow-md bg-gradient-to-br from-white to-vanilla/10 rounded-2xl p-4">
       <div className="flex items-start justify-between gap-2 mb-2 pb-2 border-b border-gold/5">
-        <div className="min-w-0">
-          <h3 className="font-display font-semibold text-text-primary text-base truncate" title={product.name}>{product.name}</h3>
-          <p className="text-xs text-text-muted mt-0.5 font-medium">{marque}</p>
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="h-12 w-12 shrink-0 rounded-xl bg-vanilla/60 border border-gold/15 flex items-center justify-center overflow-hidden">
+            {product.image ? (
+              <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+            ) : (
+              <Package size={20} className="text-gold/40" />
+            )}
+          </div>
+          <div className="min-w-0">
+            <h3 className="font-display font-semibold text-text-primary text-base truncate" title={product.name}>{product.name}</h3>
+            <p className="text-xs text-text-muted mt-0.5 font-medium">{marque}</p>
+          </div>
         </div>
         <div className="flex flex-col items-end gap-1 shrink-0">
           <Badge variant="info" className="bg-pistachio/10 text-pistachio hover:bg-pistachio/20 border-0">{category}</Badge>

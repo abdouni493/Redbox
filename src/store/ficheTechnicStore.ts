@@ -6,6 +6,8 @@ import { uid } from '@/lib/utils';
 export interface FicheTechnic {
   id: string;
   name: string;
+  // Optional product image, stored as a base64 data URL.
+  image?: string | null;
   categoryId: string;
   categoryName: string;
   description?: string;

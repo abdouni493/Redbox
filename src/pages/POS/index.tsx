@@ -177,7 +177,9 @@ export default function POS() {
                 onClick={() => addToCart(item)}
                 className="bg-gradient-card border border-gold/15 rounded-2xl p-4 text-left shadow-card hover:shadow-hover transition-shadow"
               >
-                <div className="h-10 w-10 rounded-xl bg-gradient-rose flex items-center justify-center text-white mb-2"><CakeSlice size={20} /></div>
+                <div className="h-14 w-14 rounded-xl bg-gradient-rose flex items-center justify-center text-white mb-2 overflow-hidden">
+                  {item.image ? <img src={item.image} alt={item.productName} className="h-full w-full object-cover" /> : <CakeSlice size={20} />}
+                </div>
                 <p className="font-medium text-text-primary text-sm truncate">{item.productName}</p>
                 <p className="text-gold-dark font-bold tabular text-sm mt-1">{formatCurrency(item.unitPrice)}{item.sellByUnit && item.unit ? <span className="text-xs text-text-muted font-normal">/{item.unit}</span> : null}</p>
                 <p className="text-xs text-text-muted">Dispo: {item.quantity}{item.sellByUnit && item.unit ? ` ${item.unit}` : ''}</p>

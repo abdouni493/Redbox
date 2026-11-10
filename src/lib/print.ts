@@ -24,22 +24,22 @@ interface InvoiceData {
 
 const css = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #5A2A47; padding: 24px; background: #fff; }
-  .sheet { max-width: 760px; margin: 0 auto; border: 2px solid #FFC2DD; border-radius: 18px; overflow: hidden; box-shadow: 0 6px 24px rgba(229,84,127,.08); }
+  body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #1F1206; padding: 24px; background: #fff; }
+  .sheet { max-width: 760px; margin: 0 auto; border: 2px solid #FFD9C2; border-radius: 18px; overflow: hidden; box-shadow: 0 6px 24px rgba(226,78,14,.08); }
 
   /* Header */
-  .header { display: flex; align-items: center; gap: 18px; padding: 22px 26px; background: linear-gradient(135deg,#FFF4FA 0%,#FFEAF3 100%); border-bottom: 3px solid #FF7FB0; }
-  .logo-box { width: 78px; height: 78px; border-radius: 16px; border: 2px solid #FF7FB0; background:#fff; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0; }
+  .header { display: flex; align-items: center; gap: 18px; padding: 22px 26px; background: linear-gradient(135deg,#FFF8F3 0%,#FFEEE2 100%); border-bottom: 3px solid #FF6B2C; }
+  .logo-box { width: 78px; height: 78px; border-radius: 16px; border: 2px solid #FF6B2C; background:#fff; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0; }
   .logo-box img { width:100%; height:100%; object-fit:cover; }
-  .logo-fallback { font-family: Georgia, serif; font-size: 30px; color:#FF7FB0; }
+  .logo-fallback { font-family: 'Poppins', 'Segoe UI', sans-serif; font-size: 30px; color:#FF6B2C; }
   .store-info { flex:1; }
-  .store-name { font-family: Georgia, serif; font-size: 24px; font-weight: bold; color: #6E3B5C; }
-  .store-tag { font-size: 12px; color:#B06A8C; font-style: italic; margin-top:2px; }
+  .store-name { font-family: 'Poppins', 'Segoe UI', sans-serif; font-size: 24px; font-weight: bold; color: #5C4632; }
+  .store-tag { font-size: 12px; color:#9A8574; font-style: italic; margin-top:2px; }
   .store-meta { font-size: 12px; color: #8A4A6B; margin-top: 8px; line-height: 1.6; }
   .store-meta span { display:inline-block; margin-right:14px; }
 
   /* Title bar */
-  .title-bar { display:flex; justify-content:space-between; align-items:center; padding: 14px 26px; background:#FF7FB0; color:#fff; }
+  .title-bar { display:flex; justify-content:space-between; align-items:center; padding: 14px 26px; background:#FF6B2C; color:#fff; }
   .title { font-size: 18px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; }
   .title-meta { text-align:right; font-size:12px; line-height:1.6; }
   .title-meta strong { font-size:13px; }
@@ -47,13 +47,13 @@ const css = `
   .content { padding: 22px 26px; }
 
   /* Party box */
-  .party { background: #FFF7FB; border: 1px solid #FFC2DD; border-left: 4px solid #FF7FB0; border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; font-size: 13px; line-height: 1.6; }
-  .party .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color:#B06A8C; font-weight:600; }
-  .party strong { color: #6E3B5C; font-size: 15px; }
+  .party { background: #FFF8F3; border: 1px solid #FFD9C2; border-left: 4px solid #FF6B2C; border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; font-size: 13px; line-height: 1.6; }
+  .party .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color:#9A8574; font-weight:600; }
+  .party strong { color: #5C4632; font-size: 15px; }
 
   /* Items table */
   table { width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 13px; border:1px solid #FBE4EF; border-radius:10px; overflow:hidden; }
-  th { background: #FF7FB0; color: #FFFFFF; padding: 10px 12px; text-align: left; font-weight:600; }
+  th { background: #FF6B2C; color: #FFFFFF; padding: 10px 12px; text-align: left; font-weight:600; }
   th:nth-child(2), th:nth-child(3), th:last-child, td:nth-child(2), td:nth-child(3), td:last-child { text-align: right; }
   td { padding: 10px 12px; border-bottom: 1px solid #FBE4EF; }
   tr:nth-child(even) td { background:#FFFAFC; }
@@ -61,20 +61,20 @@ const css = `
 
   /* Totals */
   .totals-wrap { display:flex; justify-content:flex-end; }
-  .totals { width: 320px; border:1px solid #FFC2DD; border-radius:12px; overflow:hidden; font-size: 14px; }
+  .totals { width: 320px; border:1px solid #FFD9C2; border-radius:12px; overflow:hidden; font-size: 14px; }
   .totals div { display: flex; justify-content: space-between; padding: 8px 16px; }
-  .totals div:nth-child(odd) { background:#FFF7FB; }
-  .totals .grand { background:#FF7FB0; color:#fff; font-weight: bold; font-size: 16px; }
+  .totals div:nth-child(odd) { background:#FFF8F3; }
+  .totals .grand { background:#FF6B2C; color:#fff; font-weight: bold; font-size: 16px; }
   .totals .rest-row span:last-child { color:#fff; }
-  .totals .rest-pos { background: linear-gradient(135deg,#FF7AA0,#E5446F) !important; color:#fff; font-weight:bold; }
+  .totals .rest-pos { background: linear-gradient(135deg,#FF7A7A,#C1121F) !important; color:#fff; font-weight:bold; }
 
   /* Footer */
-  .footer { margin-top: 22px; padding-top: 16px; border-top: 2px dashed #FFC2DD; text-align:center; }
-  .social { display:inline-flex; align-items:center; gap:6px; background:#FFF4FA; border:1px solid #FFC2DD; border-radius:999px; padding:6px 16px; font-size:13px; color:#6E3B5C; font-weight:600; }
-  .thanks { margin-top:12px; font-size:13px; color:#B06A8C; font-style: italic; }
+  .footer { margin-top: 22px; padding-top: 16px; border-top: 2px dashed #FFD9C2; text-align:center; }
+  .social { display:inline-flex; align-items:center; gap:6px; background:#FFF8F3; border:1px solid #FFD9C2; border-radius:999px; padding:6px 16px; font-size:13px; color:#5C4632; font-weight:600; }
+  .thanks { margin-top:12px; font-size:13px; color:#9A8574; font-style: italic; }
   .signatures { display: flex; justify-content: space-between; margin-top: 36px; font-size: 13px; }
   .sig-box { text-align: center; width: 45%; }
-  .sig-line { border-top: 1px solid #6E3B5C; margin-top: 38px; padding-top: 6px; color:#8A4A6B; }
+  .sig-line { border-top: 1px solid #5C4632; margin-top: 38px; padding-top: 6px; color:#8A4A6B; }
 `;
 
 function logoHtml(store: StoreSettings, big = true): string {
@@ -82,7 +82,7 @@ function logoHtml(store: StoreSettings, big = true): string {
   if (store.logo) {
     return `<div class="logo-box" ${size}><img src="${store.logo}" alt="logo"/></div>`;
   }
-  return `<div class="logo-box" ${size}><span class="logo-fallback">🥐</span></div>`;
+  return `<div class="logo-box" ${size}><span class="logo-fallback">🍔</span></div>`;
 }
 
 export function printInvoice(data: InvoiceData, store: StoreSettings) {

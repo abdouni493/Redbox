@@ -32,14 +32,14 @@ import { computeReportCalc } from '@/pages/Caisse/CaisseReports';
 type Row = { title: string; sub?: string; value: number; danger?: boolean };
 
 const ACCENTS: Record<string, string> = {
-  gold: 'from-[#FF9CC0] to-[#F0568A]',
-  rose: 'from-[#FFB0CB] to-[#F2547D]',
-  pistachio: 'from-[#A6E9CE] to-[#3FB591]',
-  caramel: 'from-[#FFD08A] to-[#F2944A]',
-  lavender: 'from-[#CDB0F5] to-[#9B7ED8]',
+  gold: 'from-[#FFA76B] to-[#E24E0E]',
+  rose: 'from-[#FF7A7A] to-[#C1121F]',
+  pistachio: 'from-[#6EE7A8] to-[#16A34A]',
+  caramel: 'from-[#FCD34D] to-[#F59E0B]',
+  lavender: 'from-[#2DD4BF] to-[#0C7E7D]',
 };
 const ACCENT_TEXT: Record<string, string> = {
-  gold: 'text-gold-dark', rose: 'text-rose-deep', pistachio: 'text-pistachio', caramel: 'text-gold-dark', lavender: 'text-[#7B5BB8]',
+  gold: 'text-gold-dark', rose: 'text-rose-deep', pistachio: 'text-pistachio', caramel: 'text-caramel', lavender: 'text-lavender-deep',
 };
 
 export default function ReportsPage() {

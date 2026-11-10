@@ -35,7 +35,7 @@ export function renderBarcode(
       fontSize: 14,
       margin: 8,
       background: '#ffffff',
-      lineColor: '#2C1810',
+      lineColor: '#1F1206',
       ...options,
     });
   } catch {
@@ -48,7 +48,7 @@ export function renderBarcode(
         fontSize: 14,
         margin: 8,
         background: '#ffffff',
-        lineColor: '#2C1810',
+        lineColor: '#1F1206',
         ...options,
         format: 'CODE128',
       });
@@ -75,7 +75,7 @@ export function printBarcode(value: string, productName: string) {
         <title>Code-barres — ${productName}</title>
         <style>
           body { font-family: 'Inter', sans-serif; text-align: center; padding: 40px; }
-          h2 { font-family: serif; color: #2C1810; margin-bottom: 24px; }
+          h2 { font-family: 'Poppins', sans-serif; font-weight: 700; color: #1F1206; margin-bottom: 24px; }
           svg { margin: 0 auto; }
         </style>
       </head>

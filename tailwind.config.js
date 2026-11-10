@@ -4,61 +4,63 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Warm bakery backgrounds
-        cream: '#FDF8F0',
-        vanilla: '#F5EDE0',
-        // Golden wheat = primary accent (token name "gold" kept for compatibility)
+        // Clean warm fast-food backgrounds
+        cream: '#FFF8F3',
+        vanilla: '#FFEEE2',
+        // Hot appetizing orange = primary accent (token name "gold" kept for compatibility)
         gold: {
-          DEFAULT: '#C8892E',
-          light: '#E8C87A',
-          dark: '#9B6A1F',
+          DEFAULT: '#FF6B2C',
+          light: '#FFA76B',
+          dark: '#E24E0E',
         },
-        // Warm terracotta (rose.deep = danger / debt signal)
+        // Fast-food red (rose.deep = danger / debt signal)
         rose: {
-          DEFAULT: '#D4856A',
-          deep: '#C0392B',
+          DEFAULT: '#EF4444',
+          deep: '#C1121F',
         },
-        // Deep blue-slate for variety accents
+        // Fresh teal for variety accents
         lavender: {
-          DEFAULT: '#6B7FA3',
-          deep: '#4A5D80',
+          DEFAULT: '#0EA5A4',
+          deep: '#0C7E7D',
         },
-        // Rich espresso — used for high-contrast text & overlays
-        chocolate: '#3E2723',
+        // Deep charcoal — used for high-contrast text, sidebar & overlays
+        chocolate: '#1A120B',
         // Warm amber (warning)
-        caramel: '#E67E22',
-        // Forest sage (success)
-        pistachio: '#27AE60',
+        caramel: '#F59E0B',
+        // Fresh green (success)
+        pistachio: '#16A34A',
+        // Punchy yellow pop (fast-food secondary)
+        sun: '#FFC43D',
         text: {
-          primary: '#2C1810',
-          secondary: '#5D4037',
-          muted: '#8D6E63',
-          light: '#FDF8F0',
+          primary: '#1F1206',
+          secondary: '#5C4632',
+          muted: '#9A8574',
+          light: '#FFF8F3',
         },
       },
       fontFamily: {
-        display: ['"Playfair Display"', 'serif'],
+        display: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       backgroundImage: {
-        'gradient-hero': 'linear-gradient(135deg, #3E2723 0%, #5D4037 28%, #4E342E 62%, #6D4C41 100%)',
-        'gradient-sidebar': 'linear-gradient(180deg, #3E2723 0%, #4E342E 48%, #5D4037 100%)',
-        'gradient-card': 'linear-gradient(145deg, #FFFFFF 0%, #FDF8F0 100%)',
-        'gradient-button': 'linear-gradient(135deg, #D4A04A 0%, #C8892E 50%, #9B6A1F 100%)',
-        'gradient-rose': 'linear-gradient(135deg, #E8A090 0%, #D4856A 50%, #C0392B 100%)',
-        'gradient-lavender': 'linear-gradient(135deg, #8FA3C4 0%, #6B7FA3 50%, #4A5D80 100%)',
-        'gradient-mint': 'linear-gradient(135deg, #7DCEA0 0%, #27AE60 100%)',
-        'gradient-glass': 'linear-gradient(135deg, rgba(253,248,240,0.92) 0%, rgba(245,237,224,0.75) 100%)',
+        'gradient-hero': 'linear-gradient(135deg, #C1121F 0%, #E63946 32%, #FF6B2C 72%, #FF8A3D 100%)',
+        'gradient-sidebar': 'linear-gradient(180deg, #1A120B 0%, #2A1C10 52%, #231708 100%)',
+        'gradient-card': 'linear-gradient(145deg, #FFFFFF 0%, #FFF8F3 100%)',
+        'gradient-button': 'linear-gradient(135deg, #FF8A3D 0%, #FF6B2C 50%, #E24E0E 100%)',
+        'gradient-rose': 'linear-gradient(135deg, #FF7A7A 0%, #EF4444 50%, #C1121F 100%)',
+        'gradient-lavender': 'linear-gradient(135deg, #2DD4BF 0%, #0EA5A4 50%, #0C7E7D 100%)',
+        'gradient-mint': 'linear-gradient(135deg, #4ADE80 0%, #16A34A 100%)',
+        'gradient-glass': 'linear-gradient(135deg, rgba(255,248,243,0.92) 0%, rgba(255,238,226,0.75) 100%)',
       },
       boxShadow: {
-        card: '0 4px 24px rgba(62, 39, 35, 0.08), 0 1px 4px rgba(62, 39, 35, 0.04)',
-        hover: '0 10px 34px rgba(62, 39, 35, 0.14), 0 2px 8px rgba(62, 39, 35, 0.08)',
-        gold: '0 6px 22px rgba(200, 137, 46, 0.35)',
+        card: '0 4px 24px rgba(26, 18, 11, 0.08), 0 1px 4px rgba(26, 18, 11, 0.04)',
+        hover: '0 10px 34px rgba(226, 78, 14, 0.18), 0 2px 8px rgba(26, 18, 11, 0.08)',
+        gold: '0 8px 24px rgba(255, 107, 44, 0.42)',
       },
       borderRadius: {
-        xl: '1rem',
-        '2xl': '1.25rem',
+        xl: '0.875rem',
+        '2xl': '1.1rem',
       },
     },
   },

@@ -11,6 +11,7 @@ interface ProductionState {
   categories: Category[];
   addProduction: (data: {
     name: string;
+    image?: string | null;
     description: string;
     date: string;
     hour: string;
@@ -148,13 +149,14 @@ export const useProductionStore = create<ProductionState>()(
       productions: DEMO_PRODUCTIONS,
       categories: DEMO_PROD_CATEGORIES,
 
-      addProduction: ({ name, description, date, hour, categoryId, categoryName, usedProducts, outputQuantity, unitPrice, sellByUnit, sellUnit }) => {
+      addProduction: ({ name, image, description, date, hour, categoryId, categoryName, usedProducts, outputQuantity, unitPrice, sellByUnit, sellUnit }) => {
         const totalValue = outputQuantity * unitPrice;
         const totalCost = usedProducts.reduce((s, u) => s + (u.lineCost ?? 0), 0);
         const createdBy = getCurrentUsername();
         const production: Production = {
           id: uid('prod-batch'),
           name,
+          image: image ?? null,
           description,
           date,
           hour,
@@ -215,6 +217,7 @@ export const useProductionStore = create<ProductionState>()(
         useComptoirStore.getState().addComptoirItem({
           productionId: prod.id,
           productName: prod.name,
+          image: prod.image ?? null,
           description: prod.description,
           quantity: qty,
           unitPrice: prod.unitPrice,

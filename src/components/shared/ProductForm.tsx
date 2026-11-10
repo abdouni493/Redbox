@@ -8,6 +8,7 @@ import { Modal } from '@/components/ui/Modal';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { BarcodeDisplay } from '@/components/ui/BarcodeDisplay';
 import { UnitSelect } from '@/components/shared/UnitSelect';
+import { ImageUpload } from '@/components/shared/ImageUpload';
 import { useStockStore } from '@/store/stockStore';
 import { useLanguage } from '@/hooks/useLanguage';
 import { generateEAN13, printBarcode } from '@/lib/barcodeUtils';
@@ -27,6 +28,7 @@ export function ProductForm({ initial, onSubmit, onCancel }: ProductFormProps) {
   const [form, setForm] = useState({
     name: initial?.name || '',
     description: initial?.description || '',
+    image: initial?.image || null,
     barcode: initial?.barcode || '',
     marqueId: initial?.marqueId || '',
     categoryId: initial?.categoryId || '',
@@ -90,6 +92,7 @@ export function ProductForm({ initial, onSubmit, onCancel }: ProductFormProps) {
     onSubmit({
       name: form.name,
       description: form.description,
+      image: form.image || null,
       barcode: form.barcode || generateEAN13(),
       marqueId: form.marqueId,
       categoryId: form.categoryId,
@@ -107,6 +110,7 @@ export function ProductForm({ initial, onSubmit, onCancel }: ProductFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <Input label={`${t('productName')} *`} value={form.name} onChange={(e) => set('name', e.target.value)} error={errors.name} />
+      <ImageUpload label={t('image')} value={form.image} onChange={(v) => set('image', v)} />
       <Textarea label={t('description')} value={form.description} onChange={(e) => set('description', e.target.value)} />
 
       {/* Barcode */}

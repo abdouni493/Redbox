@@ -126,8 +126,13 @@ export default function ComptoirPage() {
             {filtered.map((item, i) => (
               <Card key={item.id} index={i} hoverable className="flex flex-col">
                 <div className="flex items-start justify-between gap-2 mb-1">
-                  <h3 className="font-display font-semibold text-text-primary">{item.productName}</h3>
-                  {item.categoryName && <Badge variant="info">{item.categoryName}</Badge>}
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="h-12 w-12 shrink-0 rounded-xl bg-vanilla/60 border border-gold/15 flex items-center justify-center overflow-hidden">
+                      {item.image ? <img src={item.image} alt={item.productName} className="h-full w-full object-cover" /> : <Store size={20} className="text-gold/40" />}
+                    </div>
+                    <h3 className="font-display font-semibold text-text-primary truncate">{item.productName}</h3>
+                  </div>
+                  {item.categoryName && <Badge variant="info" className="shrink-0">{item.categoryName}</Badge>}
                 </div>
                 <p className="text-xs text-text-muted mb-3">Production: {formatDate(item.date, language)}</p>
                 <div className="bg-vanilla/40 rounded-xl p-3 space-y-1 text-sm mb-3">

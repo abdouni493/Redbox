@@ -3,38 +3,39 @@
 @tailwind utilities;
 
 :root {
-  /* Artisan boulangerie palette */
-  --color-cream: #fdf8f0;
-  --color-gold: #c8892e;
-  --color-gold-light: #e8c87a;
-  --color-gold-dark: #9b6a1f;
-  --color-rose: #d4856a;
-  --color-rose-deep: #c0392b;
-  --color-lavender: #6b7fa3;
-  --color-chocolate: #3e2723;
-  --color-caramel: #e67e22;
-  --color-pistachio: #27ae60;
-  --color-vanilla: #f5ede0;
+  /* Altech Food — bold fast-food palette */
+  --color-cream: #fff8f3;
+  --color-gold: #ff6b2c;
+  --color-gold-light: #ffa76b;
+  --color-gold-dark: #e24e0e;
+  --color-rose: #ef4444;
+  --color-rose-deep: #c1121f;
+  --color-lavender: #0ea5a4;
+  --color-chocolate: #1a120b;
+  --color-caramel: #f59e0b;
+  --color-pistachio: #16a34a;
+  --color-vanilla: #ffeee2;
+  --color-sun: #ffc43d;
 
-  /* Dégradés signatures — artisan boulangerie */
-  --gradient-hero: linear-gradient(135deg, #3e2723 0%, #5d4037 28%, #4e342e 62%, #6d4c41 100%);
-  --gradient-sidebar: linear-gradient(180deg, #3e2723 0%, #4e342e 48%, #5d4037 100%);
-  --gradient-card: linear-gradient(145deg, #ffffff 0%, #fdf8f0 100%);
-  --gradient-button: linear-gradient(135deg, #d4a04a 0%, #c8892e 50%, #9b6a1f 100%);
-  --gradient-rose: linear-gradient(135deg, #e8a090 0%, #d4856a 50%, #c0392b 100%);
-  --gradient-lavender: linear-gradient(135deg, #8fa3c4 0%, #6b7fa3 50%, #4a5d80 100%);
-  --gradient-glass: linear-gradient(135deg, rgba(253, 248, 240, 0.92) 0%, rgba(245, 237, 224, 0.75) 100%);
+  /* Signature gradients — Altech Food */
+  --gradient-hero: linear-gradient(135deg, #c1121f 0%, #e63946 32%, #ff6b2c 72%, #ff8a3d 100%);
+  --gradient-sidebar: linear-gradient(180deg, #1a120b 0%, #2a1c10 52%, #231708 100%);
+  --gradient-card: linear-gradient(145deg, #ffffff 0%, #fff8f3 100%);
+  --gradient-button: linear-gradient(135deg, #ff8a3d 0%, #ff6b2c 50%, #e24e0e 100%);
+  --gradient-rose: linear-gradient(135deg, #ff7a7a 0%, #ef4444 50%, #c1121f 100%);
+  --gradient-lavender: linear-gradient(135deg, #2dd4bf 0%, #0ea5a4 50%, #0c7e7d 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(255, 248, 243, 0.92) 0%, rgba(255, 238, 226, 0.75) 100%);
 
-  /* Texte */
-  --text-primary: #2c1810;
-  --text-secondary: #5d4037;
-  --text-muted: #8d6e63;
-  --text-light: #fdf8f0;
+  /* Text */
+  --text-primary: #1f1206;
+  --text-secondary: #5c4632;
+  --text-muted: #9a8574;
+  --text-light: #fff8f3;
 
-  /* Ombres chaudes */
-  --shadow-card: 0 4px 24px rgba(62, 39, 35, 0.08), 0 1px 4px rgba(62, 39, 35, 0.04);
-  --shadow-hover: 0 10px 34px rgba(62, 39, 35, 0.14), 0 2px 8px rgba(62, 39, 35, 0.08);
-  --shadow-gold: 0 6px 22px rgba(200, 137, 46, 0.35);
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(26, 18, 11, 0.08), 0 1px 4px rgba(26, 18, 11, 0.04);
+  --shadow-hover: 0 10px 34px rgba(226, 78, 14, 0.18), 0 2px 8px rgba(26, 18, 11, 0.08);
+  --shadow-gold: 0 8px 24px rgba(255, 107, 44, 0.42);
 }
 
 * {
@@ -63,10 +64,11 @@ html[dir='rtl'] body {
 }
 
 .font-display {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Poppins', 'Inter', system-ui, sans-serif;
+  letter-spacing: -0.015em;
 }
 html[dir='rtl'] .font-display {
-  font-family: 'Cairo', serif;
+  font-family: 'Cairo', sans-serif;
 }
 
 /* Scrollbar styling — warm wood tones */
@@ -78,11 +80,11 @@ html[dir='rtl'] .font-display {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(200, 137, 46, 0.35);
+  background: rgba(255, 107, 44, 0.4);
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(200, 137, 46, 0.6);
+  background: rgba(255, 107, 44, 0.7);
 }
 
 /* Utility classes */
@@ -90,7 +92,7 @@ html[dir='rtl'] .font-display {
   background: var(--gradient-glass);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(200, 137, 46, 0.25);
+  border: 1px solid rgba(255, 107, 44, 0.25);
 }
 
 .text-gradient-gold {
@@ -126,7 +128,7 @@ html[dir='rtl'] .font-display {
 }
 
 .shimmer {
-  background: linear-gradient(90deg, rgba(200, 137, 46, 0.04) 25%, rgba(200, 137, 46, 0.12) 50%, rgba(200, 137, 46, 0.04) 75%);
+  background: linear-gradient(90deg, rgba(255, 107, 44, 0.04) 25%, rgba(255, 107, 44, 0.14) 50%, rgba(255, 107, 44, 0.04) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }

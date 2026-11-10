@@ -293,8 +293,8 @@ export default function CommandsPage() {
       .join('');
 
     const logo = settings.logo
-      ? `<div style="width: 78px; height: 78px; border-radius: 16px; border: 2px solid #FF7FB0; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#fff;"><img src="${settings.logo}" style="width:100%; height:100%; object-fit:cover;"/></div>`
-      : `<div style="width: 78px; height: 78px; border-radius: 16px; border: 2px solid #FF7FB0; display:flex; align-items:center; justify-content:center; font-size:30px; background:#fff;">🥐</div>`;
+      ? `<div style="width: 78px; height: 78px; border-radius: 16px; border: 2px solid #FF6B2C; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#fff;"><img src="${settings.logo}" style="width:100%; height:100%; object-fit:cover;"/></div>`
+      : `<div style="width: 78px; height: 78px; border-radius: 16px; border: 2px solid #FF6B2C; display:flex; align-items:center; justify-content:center; font-size:30px; background:#fff;">🍔</div>`;
 
     win.document.write(`
       <html>
@@ -302,21 +302,21 @@ export default function CommandsPage() {
           <title>Commande ${cmd.reference}</title>
           <style>
             * { box-sizing: border-box; margin: 0; padding: 0; }
-            body { font-family: 'Segoe UI', Arial, sans-serif; color: #5A2A47; padding: 24px; background: #fff; }
-            .sheet { max-width: 650px; margin: 0 auto; border: 2px solid #FFC2DD; border-radius: 18px; overflow: hidden; }
-            .header { display: flex; align-items: center; gap: 18px; padding: 20px; background: linear-gradient(135deg,#FFF4FA 0%,#FFEAF3 100%); border-bottom: 3px solid #FF7FB0; }
-            .store-name { font-size: 22px; font-weight: bold; color: #6E3B5C; }
+            body { font-family: 'Segoe UI', Arial, sans-serif; color: #1F1206; padding: 24px; background: #fff; }
+            .sheet { max-width: 650px; margin: 0 auto; border: 2px solid #FFD9C2; border-radius: 18px; overflow: hidden; }
+            .header { display: flex; align-items: center; gap: 18px; padding: 20px; background: linear-gradient(135deg,#FFF8F3 0%,#FFEEE2 100%); border-bottom: 3px solid #FF6B2C; }
+            .store-name { font-size: 22px; font-weight: bold; color: #5C4632; }
             .store-meta { font-size: 11px; color: #8A4A6B; margin-top: 4px; }
-            .title-bar { display:flex; justify-content:space-between; align-items:center; padding: 12px 20px; background:#FF7FB0; color:#fff; }
+            .title-bar { display:flex; justify-content:space-between; align-items:center; padding: 12px 20px; background:#FF6B2C; color:#fff; }
             .title { font-size: 16px; font-weight: bold; letter-spacing: 1px; }
             .content { padding: 20px; }
-            .party { background: #FFF7FB; border: 1px solid #FFC2DD; border-left: 4px solid #FF7FB0; border-radius: 10px; padding: 12px; margin-bottom: 18px; font-size: 13px; }
+            .party { background: #FFF8F3; border: 1px solid #FFD9C2; border-left: 4px solid #FF6B2C; border-radius: 10px; padding: 12px; margin-bottom: 18px; font-size: 13px; }
             table { width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 13px; }
-            th { background: #FFF4FA; color: #6E3B5C; padding: 10px; text-align: left; font-weight:600; border-bottom: 2px solid #FFC2DD; }
-            .totals { width: 280px; margin-left: auto; border: 1px solid #FFC2DD; border-radius: 10px; font-size: 13px; }
+            th { background: #FFF8F3; color: #5C4632; padding: 10px; text-align: left; font-weight:600; border-bottom: 2px solid #FFD9C2; }
+            .totals { width: 280px; margin-left: auto; border: 1px solid #FFD9C2; border-radius: 10px; font-size: 13px; }
             .totals div { display: flex; justify-content: space-between; padding: 8px 12px; }
-            .totals .grand { background: #FF7FB0; color: #fff; font-weight: bold; }
-            .footer { margin-top: 20px; border-top: 2px dashed #FFC2DD; padding-top: 10px; text-align: center; font-size: 12px; color: #B06A8C; }
+            .totals .grand { background: #FF6B2C; color: #fff; font-weight: bold; }
+            .footer { margin-top: 20px; border-top: 2px dashed #FFD9C2; padding-top: 10px; text-align: center; font-size: 12px; color: #9A8574; }
           </style>
         </head>
         <body>
@@ -407,17 +407,17 @@ export default function CommandsPage() {
       {/* ===== Statistics Cards ===== */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <Card index={0} className="relative overflow-hidden">
-          <div className="absolute -top-6 -right-6 h-20 w-20 rounded-full bg-gradient-to-br from-[#A6E9CE] to-[#3FB591] opacity-10" />
+          <div className="absolute -top-6 -right-6 h-20 w-20 rounded-full bg-gradient-to-br from-[#6EE7A8] to-[#16A34A] opacity-10" />
           <p className="text-sm text-text-muted mb-1">Total Commandes</p>
           <p className="text-2xl font-bold tabular text-gold-dark">{formatCurrency(stats.totalValue)}</p>
         </Card>
         <Card index={1} className="relative overflow-hidden">
-          <div className="absolute -top-6 -right-6 h-20 w-20 rounded-full bg-gradient-to-br from-[#FFC2DD] to-[#FF7FB0] opacity-10" />
+          <div className="absolute -top-6 -right-6 h-20 w-20 rounded-full bg-gradient-to-br from-[#FFD9C2] to-[#FF6B2C] opacity-10" />
           <p className="text-sm text-text-muted mb-1">Total Versé (Acomptes)</p>
           <p className="text-2xl font-bold tabular text-pistachio">{formatCurrency(stats.totalPaid)}</p>
         </Card>
         <Card index={2} className="relative overflow-hidden">
-          <div className="absolute -top-6 -right-6 h-20 w-20 rounded-full bg-gradient-to-br from-[#FFB0CB] to-[#F2547D] opacity-10" />
+          <div className="absolute -top-6 -right-6 h-20 w-20 rounded-full bg-gradient-to-br from-[#FF7A7A] to-[#C1121F] opacity-10" />
           <p className="text-sm text-text-muted mb-1">Total Dettes</p>
           <p className="text-2xl font-bold tabular text-rose-deep">{formatCurrency(stats.totalRest)}</p>
         </Card>

@@ -16,11 +16,11 @@ interface StatCardProps {
 }
 
 const accents = {
-  gold: 'from-[#D4A04A] to-[#9B6A1F]',
-  rose: 'from-[#E8A090] to-[#C0392B]',
-  pistachio: 'from-[#7DCEA0] to-[#27AE60]',
-  caramel: 'from-[#F0A94E] to-[#E67E22]',
-  lavender: 'from-[#8FA3C4] to-[#4A5D80]',
+  gold: 'from-[#FFA76B] to-[#E24E0E]',
+  rose: 'from-[#FF7A7A] to-[#C1121F]',
+  pistachio: 'from-[#6EE7A8] to-[#16A34A]',
+  caramel: 'from-[#FCD34D] to-[#F59E0B]',
+  lavender: 'from-[#2DD4BF] to-[#0C7E7D]',
 };
 
 export function StatCard({ label, value, icon, format = 'number', accent = 'gold', index = 0, suffix }: StatCardProps) {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Croissant, Lock, User, Mail, ChevronDown, Eye, EyeOff, Wheat } from 'lucide-react';
+import { Pizza, Lock, User, Mail, ChevronDown, Eye, EyeOff, Sandwich } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/Button';
@@ -17,7 +17,7 @@ const floatingIcons = Array.from({ length: 14 }).map((_, i) => ({
   size: 18 + (i % 5) * 10,
   delay: i * 0.35,
   duration: 7 + (i % 4),
-  icon: i % 3 === 0 ? 'wheat' : 'croissant',
+  icon: i % 3 === 0 ? 'pizza' : 'sandwich',
 }));
 
 export default function Login() {
@@ -100,7 +100,7 @@ export default function Login() {
           animate={{ y: [0, -25, 0], rotate: [0, 12, 0], opacity: [0.08, 0.2, 0.08] }}
           transition={{ duration: f.duration, delay: f.delay, repeat: Infinity, ease: 'easeInOut' }}
         >
-          {f.icon === 'wheat' ? <Wheat size={f.size} /> : <Croissant size={f.size} />}
+          {f.icon === 'pizza' ? <Pizza size={f.size} /> : <Sandwich size={f.size} />}
         </motion.div>
       ))}
 
@@ -185,7 +185,7 @@ export default function Login() {
             size="lg"
             className="w-full flex items-center justify-center gap-2 border-gold/30 hover:border-gold hover:bg-gold/10 text-gold-dark font-semibold shadow-sm"
           >
-            <Wheat size={18} className="animate-pulse text-gold" />
+            <Sandwich size={18} className="animate-pulse text-gold" />
             Accès Démo Admin (Rapide)
           </Button>
 

@@ -1,8 +1,8 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  ChefHat, Wheat, ShoppingCart, Croissant, Cookie, CreditCard,
-  Receipt, Users, Truck, Flame, Banknote, Wallet, TrendingUp, Settings, LogOut, X
+  LayoutDashboard, Boxes, ShoppingCart, CookingPot, Sandwich, CreditCard,
+  Receipt, Users, Truck, UserCog, Banknote, Wallet, TrendingUp, Settings, LogOut, X
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -17,20 +17,20 @@ interface NavItem {
   to: string;
   key: TranslationKey;
   module: PermissionModule;
-  icon: typeof ChefHat;
+  icon: typeof LayoutDashboard;
 }
 
 const navItems: NavItem[] = [
-  { to: '/dashboard', key: 'dashboard', module: 'dashboard', icon: ChefHat },
-  { to: '/stock', key: 'stock', module: 'stock', icon: Wheat },
+  { to: '/dashboard', key: 'dashboard', module: 'dashboard', icon: LayoutDashboard },
+  { to: '/stock', key: 'stock', module: 'stock', icon: Boxes },
   { to: '/purchase', key: 'purchase', module: 'purchase', icon: ShoppingCart },
-  { to: '/production', key: 'production', module: 'production', icon: Croissant },
-  { to: '/comptoir', key: 'comptoir', module: 'comptoir', icon: Cookie },
+  { to: '/production', key: 'production', module: 'production', icon: CookingPot },
+  { to: '/comptoir', key: 'comptoir', module: 'comptoir', icon: Sandwich },
   { to: '/pos', key: 'pos', module: 'pos', icon: CreditCard },
   { to: '/sales', key: 'sales', module: 'sales', icon: Receipt },
   { to: '/clients', key: 'clients', module: 'clients', icon: Users },
   { to: '/suppliers', key: 'suppliers', module: 'suppliers', icon: Truck },
-  { to: '/workers', key: 'workers', module: 'workers', icon: Flame },
+  { to: '/workers', key: 'workers', module: 'workers', icon: UserCog },
   { to: '/expenses', key: 'expenses', module: 'expenses', icon: Banknote },
   { to: '/caisse', key: 'caisse', module: 'caisse', icon: Wallet },
   { to: '/reports', key: 'reports', module: 'reports', icon: TrendingUp },

@@ -157,7 +157,7 @@ export default function ComptoirStatsPage() {
                     <span className="tabular text-text-secondary">{p.units}{p.sellByUnit && p.unit ? ` ${p.unit}` : ''} · {formatCurrency(p.revenue)}</span>
                   </div>
                   <div className="h-2.5 rounded-full bg-vanilla/70 overflow-hidden">
-                    <motion.div className="h-full rounded-full bg-gradient-to-r from-[#A6E9CE] to-[#3FB591]" initial={{ width: 0 }} animate={{ width: `${(p.units / maxSold) * 100}%` }} transition={{ duration: 0.8 }} />
+                    <motion.div className="h-full rounded-full bg-gradient-to-r from-[#6EE7A8] to-[#16A34A]" initial={{ width: 0 }} animate={{ width: `${(p.units / maxSold) * 100}%` }} transition={{ duration: 0.8 }} />
                   </div>
                 </div>
               ))}

@@ -9,12 +9,12 @@ interface SettingsState {
 
 const defaultSettings: StoreSettings = {
   logo: null,
-  name: "Boulengerie La Rose d'Or",
-  description: 'Boulengerie Fine - Production & Vente',
-  email: 'contact@larosedor.com',
+  name: 'Altech Food',
+  description: 'Fast Food - Commande & Vente',
+  email: 'contact@altechfood.com',
   phone: '0555 12 34 56',
   address: '12 Rue des Jardins, Alger',
-  socialMedia: '@larosedor.alger',
+  socialMedia: '@altechfood',
   nif: '001234567890123',
   nis: '1920384756',
   article: '16253445',

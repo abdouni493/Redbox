@@ -25,7 +25,7 @@ import { useWorkerStore } from '@/store/workerStore';
 import { useCommandStore } from '@/store/commandStore';
 import { formatCurrency, formatDate, daysUntil, getMonthLabel } from '@/lib/utils';
 
-const CHART_COLORS = ['#FF7FB0', '#B79CED', '#3FB591', '#FFB36B', '#E5446F', '#FFD66B'];
+const CHART_COLORS = ['#FF6B2C', '#0EA5A4', '#16A34A', '#FFC43D', '#EF4444', '#F59E0B'];
 
 export default function Dashboard() {
   const { t, language } = useLanguage();
@@ -183,7 +183,7 @@ export default function Dashboard() {
               >
                 <div className="flex items-center gap-3">
                   <div className={`h-9 w-9 rounded-xl flex items-center justify-center text-white bg-gradient-to-br shrink-0 ${
-                    isOverdue ? 'from-[#FFB0CB] to-[#F2547D]' : 'from-[#FFD08A] to-[#F2944A]'
+                    isOverdue ? 'from-[#FF7A7A] to-[#C1121F]' : 'from-[#FFA76B] to-[#E24E0E]'
                   }`}>
                     <Clock size={16} />
                   </div>
@@ -224,15 +224,15 @@ export default function Dashboard() {
             <LineChart data={salesEvolution}>
               <defs>
                 <linearGradient id="salesGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#FF7FB0" stopOpacity={0.4} />
-                  <stop offset="100%" stopColor="#FF7FB0" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#FF6B2C" stopOpacity={0.4} />
+                  <stop offset="100%" stopColor="#FF6B2C" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#FFC2DD80" />
-              <XAxis dataKey="date" stroke="#B07E9A" fontSize={11} />
-              <YAxis stroke="#B07E9A" fontSize={11} />
-              <Tooltip formatter={(v: number) => formatCurrency(v)} contentStyle={{ borderRadius: 12, border: '1px solid #FFC2DD' }} />
-              <Line type="monotone" dataKey="amount" stroke="#FF7FB0" strokeWidth={3} dot={{ fill: '#F0568A', r: 4 }} fill="url(#salesGrad)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#FFD9C280" />
+              <XAxis dataKey="date" stroke="#9A8574" fontSize={11} />
+              <YAxis stroke="#9A8574" fontSize={11} />
+              <Tooltip formatter={(v: number) => formatCurrency(v)} contentStyle={{ borderRadius: 12, border: '1px solid #FFD9C2' }} />
+              <Line type="monotone" dataKey="amount" stroke="#FF6B2C" strokeWidth={3} dot={{ fill: '#E24E0E', r: 4 }} fill="url(#salesGrad)" />
             </LineChart>
           </ResponsiveContainer>
         </Card>
@@ -241,14 +241,14 @@ export default function Dashboard() {
           <h3 className="font-display font-semibold text-text-primary mb-4">{t('salesVsPurchases')}</h3>
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={monthlyComparison}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#FFC2DD80" />
-              <XAxis dataKey="month" stroke="#B07E9A" fontSize={11} />
-              <YAxis stroke="#B07E9A" fontSize={11} />
-              <Tooltip formatter={(v: number) => formatCurrency(v)} contentStyle={{ borderRadius: 12, border: '1px solid #FFC2DD' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#FFD9C280" />
+              <XAxis dataKey="month" stroke="#9A8574" fontSize={11} />
+              <YAxis stroke="#9A8574" fontSize={11} />
+              <Tooltip formatter={(v: number) => formatCurrency(v)} contentStyle={{ borderRadius: 12, border: '1px solid #FFD9C2' }} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
-              <Bar dataKey="sales" name={t('sales')} fill="#3FB591" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="purchases" name={t('purchase')} fill="#FF7FB0" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="expenses" name={t('expenses')} fill="#B79CED" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="sales" name={t('sales')} fill="#16A34A" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="purchases" name={t('purchase')} fill="#FF6B2C" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="expenses" name={t('expenses')} fill="#0EA5A4" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </Card>
@@ -262,7 +262,7 @@ export default function Dashboard() {
                   <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #FFC2DD' }} />
+              <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #FFD9C2' }} />
             </PieChart>
           </ResponsiveContainer>
         </Card>

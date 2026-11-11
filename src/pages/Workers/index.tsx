@@ -26,14 +26,13 @@ type ModalType = 'create' | 'edit' | 'permissions' | 'acompte' | 'absence' | 'pa
 export default function WorkersPage() {
   const { t, language } = useLanguage();
   const { can } = usePermissions();
-  const { workers, roles, deleteWorker } = useWorkerStore();
+  const { workers, deleteWorker } = useWorkerStore();
 
   const [search, setSearch] = useState('');
   const [modal, setModal] = useState<ModalType>(null);
   const [active, setActive] = useState<Worker | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const roleName = (id: string) => roles.find((r) => r.id === id)?.name || '—';
   const filtered = useMemo(() => workers.filter((w) => w.fullName.toLowerCase().includes(search.toLowerCase()) || w.phone.includes(search)), [workers, search]);
 
   const open = (type: ModalType, worker?: Worker) => { setActive(worker || null); setModal(type); };
@@ -55,8 +54,7 @@ export default function WorkersPage() {
                 <div className="min-w-0">
                   <h3 className="font-display font-semibold text-text-primary truncate">{w.fullName}</h3>
                   <div className="flex flex-wrap gap-1">
-                    {roles.some((r) => r.id === w.roleId) && <Badge variant="gold">{roleName(w.roleId)}</Badge>}
-                    {w.post && w.post !== 'general' && <Badge variant="info">{POST_LABELS[w.post]}</Badge>}
+                    <Badge variant="gold">{POST_LABELS[w.post || 'general']}</Badge>
                   </div>
                 </div>
               </div>
@@ -111,7 +109,6 @@ export default function WorkersPage() {
         {active && (
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
-              {roles.some((r) => r.id === active.roleId) && <Detail label={t('role')} value={roleName(active.roleId)} />}
               <Detail label="Poste" value={POST_LABELS[active.post || 'general']} />
               <Detail label={t('phone')} value={active.phone} />
               <Detail label={t('birthday')} value={formatDate(active.birthday, language)} />

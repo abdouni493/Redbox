@@ -11,6 +11,8 @@ export interface CommandLine {
   ficheTechnicId: string;
   // Comptoir item id when the line was picked from the POS catalog
   comptoirItemId?: string;
+  // Stock product id when the line is a stock product sold directly on POS
+  stockProductId?: string;
   image?: string | null;
   productName: string;
   quantity: number;
@@ -86,59 +88,11 @@ interface CommandState {
   nextReference: () => string;
 }
 
-export const DEMO_COMMANDS: Command[] = [
-  {
-    id: 'cmd-1',
-    reference: 'CMD-001',
-    clientId: 'cli-amel',
-    clientName: 'Amel Oulhadj',
-    clientPhone: '0770 98 76 54',
-    createdAt: '2026-07-14T14:30:00Z',
-    receiveDate: '2026-07-18',
-    receiveHour: '16',
-    receiveMinute: '30',
-    items: [
-      { ficheTechnicId: 'ft-mille', productName: 'Gâteau d\'Anniversaire Chocolat (10 pers)', quantity: 1, unitPrice: 3500, totalPrice: 3500 }
-    ],
-    totalAmount: 3500,
-    paidAmount: 1500,
-    restAmount: 2000,
-    status: 'pending',
-    payments: [{ id: 'c-pay-1', date: '2026-07-14', amount: 1500, description: 'Versement initial' }],
-    createdBy: 'admin',
-    orderType: 'takeaway',
-    kitchenStatus: 'new',
-    kitchenPrinted: true,
-  },
-  {
-    id: 'cmd-2',
-    reference: 'CMD-002',
-    clientId: 'cli-lynda',
-    clientName: 'Lynda Bouzidi',
-    clientPhone: '0550 11 22 33',
-    createdAt: '2026-07-15T09:00:00Z',
-    receiveDate: '2026-07-19',
-    receiveHour: '10',
-    receiveMinute: '00',
-    items: [
-      { ficheTechnicId: 'ft-croissant', productName: 'Croissant au Beurre', quantity: 50, unitPrice: 120, totalPrice: 6000 }
-    ],
-    totalAmount: 6000,
-    paidAmount: 3000,
-    restAmount: 3000,
-    status: 'pending',
-    payments: [{ id: 'c-pay-2', date: '2026-07-15', amount: 3000, description: 'Acompte espèces' }],
-    createdBy: 'yacine',
-    orderType: 'takeaway',
-    kitchenStatus: 'new',
-    kitchenPrinted: true,
-  }
-];
 
 export const useCommandStore = create<CommandState>()(
   persist(
     (set, get) => ({
-      commands: DEMO_COMMANDS,
+      commands: [],
       autoPrintKitchen: false,
       setAutoPrintKitchen: (v) => set({ autoPrintKitchen: v }),
       nextReference: () => {
@@ -209,7 +163,8 @@ export const useCommandStore = create<CommandState>()(
           clientId,
           date: new Date().toISOString(),
           products: current.items.map((l) => ({
-            productId: l.comptoirItemId || l.ficheTechnicId,
+            productId: l.stockProductId || l.comptoirItemId || l.ficheTechnicId,
+            source: l.stockProductId ? 'stock' : 'comptoir',
             productName: l.productName,
             quantity: l.quantity,
             sellingPrice: l.unitPrice,
@@ -253,14 +208,9 @@ export const useCommandStore = create<CommandState>()(
     }),
     {
       name: 'boulengerie-commands',
-      merge: (persisted, current) => {
-        const p = (persisted ?? {}) as Partial<CommandState>;
-        return {
-          ...current,
-          ...p,
-          commands: p.commands && p.commands.length ? p.commands : DEMO_COMMANDS,
-        };
-      },
+      // Only the local kitchen auto-print preference stays in this browser;
+      // commands themselves live in Supabase.
+      partialize: (s) => ({ autoPrintKitchen: s.autoPrintKitchen }),
     }
   )
 );

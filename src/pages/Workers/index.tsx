@@ -14,6 +14,7 @@ import { WorkerAcompte } from './WorkerAcompte';
 import { WorkerAbsence } from './WorkerAbsence';
 import { WorkerPayment } from './WorkerPayment';
 import { useWorkerStore, POST_LABELS } from '@/store/workerStore';
+import { deleteWorkerAccount } from '@/lib/accounts';
 import { useLanguage } from '@/hooks/useLanguage';
 import { usePermissions } from '@/hooks/usePermissions';
 import { formatCurrency, formatDate } from '@/lib/utils';
@@ -129,7 +130,16 @@ export default function WorkersPage() {
         )}
       </Modal>
 
-      <ConfirmDialog open={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={() => { if (deleteId) { deleteWorker(deleteId); toast.success('Employé supprimé'); } }} />
+      <ConfirmDialog open={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={async () => {
+        if (!deleteId) return;
+        const w = workers.find((x) => x.id === deleteId);
+        if (w?.authUserId) {
+          const res = await deleteWorkerAccount(w.authUserId);
+          if (!res.ok) { toast.error(`Compte non supprimé : ${res.error}`); return; }
+        }
+        deleteWorker(deleteId);
+        toast.success('Employé supprimé');
+      }} />
     </div>
   );
 }

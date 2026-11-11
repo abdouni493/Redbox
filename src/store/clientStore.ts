@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import type { Client } from '@/types';
 import { uid } from '@/lib/utils';
 
@@ -15,19 +14,9 @@ interface ClientState {
   getOrCreatePassager: (name?: string) => Client;
 }
 
-export const DEMO_CLIENTS: Client[] = [
-  { id: 'cli-passager', name: 'Client passager', phone: '' },
-  { id: 'cli-karim', name: 'Karim Bensmail', phone: '0661 12 45 78' },
-  { id: 'cli-amel', name: 'Amel Oulhadj', phone: '0770 98 76 54' },
-  { id: 'cli-lynda', name: 'Lynda Bouzidi', phone: '0550 11 22 33' },
-  { id: 'cli-mourad', name: 'Mourad Belkacem', phone: '0663 88 77 66' },
-  { id: 'cli-fatiha', name: 'Fatiha Rahmani', phone: '0772 12 34 56' },
-];
-
 export const useClientStore = create<ClientState>()(
-  persist(
     (set, get) => ({
-      clients: DEMO_CLIENTS,
+      clients: [],
       addClient: (data) => {
         const c: Client = { ...data, id: uid('cli') };
         set({ clients: [...get().clients, c] });
@@ -43,17 +32,5 @@ export const useClientStore = create<ClientState>()(
         set({ clients: [...get().clients, c] });
         return c;
       },
-    }),
-    {
-      name: 'boulengerie-clients',
-      merge: (persisted, current) => {
-        const p = (persisted ?? {}) as Partial<ClientState>;
-        return {
-          ...current,
-          ...p,
-          clients: p.clients && p.clients.length ? p.clients : DEMO_CLIENTS,
-        };
-      },
-    }
-  )
+    })
 );

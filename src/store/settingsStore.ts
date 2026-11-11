@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import type { StoreSettings } from '@/types';
 
 interface SettingsState {
@@ -7,26 +6,26 @@ interface SettingsState {
   updateSettings: (data: Partial<StoreSettings>) => void;
 }
 
-const defaultSettings: StoreSettings = {
+// Empty store profile — the real values are loaded from the Supabase
+// `app_settings` table and edited from Paramètres → Infos magasin.
+export const EMPTY_SETTINGS: StoreSettings = {
   logo: null,
-  name: 'Altech Food',
-  description: 'Fast Food - Commande & Vente',
-  email: 'contact@altechfood.com',
-  phone: '0555 12 34 56',
-  address: '12 Rue des Jardins, Alger',
-  socialMedia: '@altechfood',
-  nif: '001234567890123',
-  nis: '1920384756',
-  article: '16253445',
-  rc: '16/00-1234567B',
+  name: '',
+  description: '',
+  email: '',
+  phone: '',
+  address: '',
+  socialMedia: '',
+  nif: '',
+  nis: '',
+  article: '',
+  rc: '',
+  imageOptimize: true,
+  imageMaxSize: 800,
+  imageQuality: 0.72,
 };
 
-export const useSettingsStore = create<SettingsState>()(
-  persist(
-    (set, get) => ({
-      settings: defaultSettings,
-      updateSettings: (data) => set({ settings: { ...get().settings, ...data } }),
-    }),
-    { name: 'boulengerie-settings' }
-  )
-);
+export const useSettingsStore = create<SettingsState>()((set, get) => ({
+  settings: EMPTY_SETTINGS,
+  updateSettings: (data) => set({ settings: { ...get().settings, ...data } }),
+}));

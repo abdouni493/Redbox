@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import type { ComptoirItem, Destruction } from '@/types';
 import { uid } from '@/lib/utils';
 import { getCurrentUsername } from './authStore';
@@ -18,92 +17,10 @@ interface ComptoirState {
   recoverDestructions: (destructionIds: string[]) => void;
 }
 
-export const DEMO_COMPTOIR_ITEMS: ComptoirItem[] = [
-  {
-    id: 'comp-1',
-    productionId: 'prod-batch-1',
-    productName: 'Croissant au Beurre',
-    description: 'Lot du matin - 120 pièces',
-    quantity: 85,
-    unitPrice: 120,
-    date: '2026-07-15',
-    categoryId: 'pcat-viennoiserie',
-    categoryName: 'Viennoiserie',
-    sellByUnit: false,
-    createdBy: 'admin',
-  },
-  {
-    id: 'comp-2',
-    productionId: 'prod-batch-2',
-    productName: 'Baguette Tradition',
-    description: 'Lot classique levain',
-    quantity: 110,
-    unitPrice: 20,
-    date: '2026-07-15',
-    categoryId: 'pcat-pain',
-    categoryName: 'Pain',
-    sellByUnit: false,
-    createdBy: 'admin',
-  },
-  {
-    id: 'comp-3',
-    productionId: 'prod-batch-3',
-    productName: 'Mille-feuille Vanille',
-    description: 'Mille-feuilles classiques crème vanille',
-    quantity: 25,
-    unitPrice: 180,
-    date: '2026-07-15',
-    categoryId: 'pcat-specialites',
-    categoryName: 'Brioches & Gâteaux',
-    sellByUnit: false,
-    createdBy: 'admin',
-  },
-  {
-    id: 'comp-4',
-    productionId: 'prod-batch-4',
-    productName: 'Pain au Chocolat',
-    description: 'Lot croustillant du matin',
-    quantity: 95,
-    unitPrice: 130,
-    date: '2026-07-15',
-    categoryId: 'pcat-viennoiserie',
-    categoryName: 'Viennoiserie',
-    sellByUnit: false,
-    createdBy: 'admin',
-  },
-  {
-    id: 'comp-5',
-    productionId: 'prod-batch-5',
-    productName: 'Brioche Tressée',
-    description: 'Brioche au beurre et sucre perlé',
-    quantity: 15,
-    unitPrice: 350,
-    date: '2026-07-15',
-    categoryId: 'pcat-specialites',
-    categoryName: 'Brioches & Gâteaux',
-    sellByUnit: false,
-    createdBy: 'admin',
-  }
-];
-
-export const DEMO_DESTRUCTIONS: Destruction[] = [
-  {
-    id: 'dest-1',
-    comptoirId: 'comp-1',
-    productName: 'Croissant au Beurre',
-    quantity: 5,
-    value: 600,
-    reason: 'Invendus secs / tombés au sol',
-    date: '2026-07-14',
-    createdBy: 'yacine',
-  }
-];
-
 export const useComptoirStore = create<ComptoirState>()(
-  persist(
     (set, get) => ({
-      items: DEMO_COMPTOIR_ITEMS,
-      destructions: DEMO_DESTRUCTIONS,
+      items: [],
+      destructions: [],
 
       addComptoirItem: (data) => {
         const items = get().items;
@@ -215,18 +132,5 @@ export const useComptoirStore = create<ComptoirState>()(
           destructions: get().destructions.filter((d) => !destructionIds.includes(d.id)),
         });
       },
-    }),
-    {
-      name: 'boulengerie-comptoir',
-      merge: (persisted, current) => {
-        const p = (persisted ?? {}) as Partial<ComptoirState>;
-        return {
-          ...current,
-          ...p,
-          items: p.items && p.items.length ? p.items : DEMO_COMPTOIR_ITEMS,
-          destructions: p.destructions && p.destructions.length ? p.destructions : DEMO_DESTRUCTIONS,
-        };
-      },
-    }
-  )
+    })
 );

@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import type { Purchase, PurchaseLine, Payment } from '@/types';
 import { uid } from '@/lib/utils';
 import { useStockStore } from './stockStore';
@@ -19,56 +18,9 @@ interface PurchaseState {
   nextReference: () => string;
 }
 
-export const DEMO_PURCHASES: Purchase[] = [
-  {
-    id: 'pur-1',
-    reference: 'FAC-001',
-    supplierId: 'sup-soummam',
-    date: '2026-07-02',
-    products: [
-      { productId: 'prod-farine', quantity: 200, purchasePrice: 65, unitEnabled: true, unit: 'kg', expirationDate: '2026-12-31' }
-    ],
-    totalAmount: 13000,
-    paidAmount: 10000,
-    restAmount: 3000,
-    payments: [{ id: 'pay-1', date: '2026-07-02', amount: 10000, description: 'Paiement initial chèque' }],
-    createdBy: 'admin',
-  },
-  {
-    id: 'pur-2',
-    reference: 'FAC-002',
-    supplierId: 'sup-cevital',
-    date: '2026-07-05',
-    products: [
-      { productId: 'prod-sucre', quantity: 150, purchasePrice: 95, unitEnabled: true, unit: 'kg', expirationDate: null }
-    ],
-    totalAmount: 14250,
-    paidAmount: 14250,
-    restAmount: 0,
-    payments: [{ id: 'pay-2', date: '2026-07-05', amount: 14250, description: 'Paiement Espèces' }],
-    createdBy: 'admin',
-  },
-  {
-    id: 'pur-3',
-    reference: 'FAC-003',
-    supplierId: 'sup-distri',
-    date: '2026-07-10',
-    products: [
-      { productId: 'prod-chocolat', quantity: 20, purchasePrice: 1200, unitEnabled: true, unit: 'kg', expirationDate: '2026-11-18' },
-      { productId: 'prod-amandes', quantity: 10, purchasePrice: 1800, unitEnabled: true, unit: 'kg', expirationDate: '2026-12-15' }
-    ],
-    totalAmount: 42000,
-    paidAmount: 20000,
-    restAmount: 22000,
-    payments: [{ id: 'pay-3', date: '2026-07-10', amount: 20000, description: 'Acompte par virement' }],
-    createdBy: 'admin',
-  }
-];
-
 export const usePurchaseStore = create<PurchaseState>()(
-  persist(
     (set, get) => ({
-      purchases: DEMO_PURCHASES,
+      purchases: [],
 
       nextReference: () => {
         const n = get().purchases.length + 1;
@@ -125,17 +77,5 @@ export const usePurchaseStore = create<PurchaseState>()(
             };
           }),
         }),
-    }),
-    {
-      name: 'boulengerie-purchases',
-      merge: (persisted, current) => {
-        const p = (persisted ?? {}) as Partial<PurchaseState>;
-        return {
-          ...current,
-          ...p,
-          purchases: p.purchases && p.purchases.length ? p.purchases : DEMO_PURCHASES,
-        };
-      },
-    }
-  )
+    })
 );

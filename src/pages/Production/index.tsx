@@ -671,7 +671,7 @@ function FicheTechnicForm({ initial, onClose }: { initial?: FicheTechnic; onClos
           
           <Input label="Nom de Produit *" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex: Tarte au Citron" />
 
-          <ImageUpload label="Image du produit" value={image} onChange={setImage} />
+          <ImageUpload label="Image du produit" value={image} onChange={setImage} folder="fiches" />
 
           <div className="flex items-end gap-2">
             <Select label="Catégorie *" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}

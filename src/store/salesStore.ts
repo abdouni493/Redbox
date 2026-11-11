@@ -1,8 +1,8 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import type { Sale, SaleLine, Payment, OrderServiceInfo } from '@/types';
 import { uid } from '@/lib/utils';
 import { useComptoirStore } from './comptoirStore';
+import { useStockStore } from './stockStore';
 import { getCurrentUsername } from './authStore';
 import { getActiveSessionId, paymentStamp } from './cashSessionStore';
 
@@ -24,84 +24,9 @@ interface SalesState {
   nextReference: () => string;
 }
 
-export const DEMO_SALES: Sale[] = [
-  {
-    id: 'sale-1',
-    reference: 'VTE-001',
-    clientId: 'cli-karim',
-    date: '2026-07-14',
-    products: [
-      { productId: 'comp-1', productName: 'Croissant au Beurre', quantity: 20, sellingPrice: 120 },
-      { productId: 'comp-2', productName: 'Baguette Tradition', quantity: 30, sellingPrice: 20 }
-    ],
-    totalAmount: 3000,
-    reduction: 0,
-    finalAmount: 3000,
-    paidAmount: 2000,
-    restAmount: 1000,
-    status: 'debt',
-    payments: [{ id: 's-pay-1', date: '2026-07-14', amount: 2000 }],
-    createdBy: 'yacine',
-  },
-  {
-    id: 'sale-2',
-    reference: 'VTE-002',
-    clientId: null,
-    date: '2026-07-15',
-    products: [
-      { productId: 'comp-1', productName: 'Croissant au Beurre', quantity: 10, sellingPrice: 120 },
-      { productId: 'comp-3', productName: 'Mille-feuille Vanille', quantity: 15, sellingPrice: 180 }
-    ],
-    totalAmount: 3900,
-    reduction: 100,
-    finalAmount: 3800,
-    paidAmount: 3800,
-    restAmount: 0,
-    status: 'paid',
-    payments: [{ id: 's-pay-2', date: '2026-07-15', amount: 3800 }],
-    createdBy: 'yacine',
-  },
-  {
-    id: 'sale-3',
-    reference: 'VTE-003',
-    clientId: 'cli-amel',
-    date: '2026-07-15',
-    products: [
-      { productId: 'comp-4', productName: 'Pain au Chocolat', quantity: 2, sellingPrice: 130 },
-      { productId: 'comp-5', productName: 'Brioche Tressée', quantity: 1, sellingPrice: 350 }
-    ],
-    totalAmount: 610,
-    reduction: 0,
-    finalAmount: 610,
-    paidAmount: 610,
-    restAmount: 0,
-    status: 'paid',
-    payments: [{ id: 's-pay-3', date: '2026-07-15', amount: 610 }],
-    createdBy: 'yacine',
-  },
-  {
-    id: 'sale-4',
-    reference: 'VTE-004',
-    clientId: null,
-    date: '2026-07-15',
-    products: [
-      { productId: 'comp-2', productName: 'Baguette Tradition', quantity: 10, sellingPrice: 20 }
-    ],
-    totalAmount: 200,
-    reduction: 0,
-    finalAmount: 200,
-    paidAmount: 200,
-    restAmount: 0,
-    status: 'paid',
-    payments: [{ id: 's-pay-4', date: '2026-07-15', amount: 200 }],
-    createdBy: 'admin',
-  }
-];
-
 export const useSalesStore = create<SalesState>()(
-  persist(
     (set, get) => ({
-      sales: DEMO_SALES,
+      sales: [],
 
       nextReference: () => {
         const n = get().sales.length + 1;
@@ -132,9 +57,14 @@ export const useSalesStore = create<SalesState>()(
           fromCommandId,
           ...service,
         };
-        // Reduce comptoir stock by product name
+        // Reduce the comptoir (by product name) or, for products sold directly
+        // from stock ("vente directe au POS"), the stock quantity.
         const comptoir = useComptoirStore.getState();
-        products.forEach((line) => comptoir.reduceByName(line.productName || '', line.quantity));
+        const stock = useStockStore.getState();
+        products.forEach((line) => {
+          if (line.source === 'stock') stock.consumeStock(line.productId, line.quantity);
+          else comptoir.reduceByName(line.productName || '', line.quantity);
+        });
         set({ sales: [sale, ...get().sales] });
         return sale;
       },
@@ -160,17 +90,5 @@ export const useSalesStore = create<SalesState>()(
             };
           }),
         }),
-    }),
-    {
-      name: 'boulengerie-sales',
-      merge: (persisted, current) => {
-        const p = (persisted ?? {}) as Partial<SalesState>;
-        return {
-          ...current,
-          ...p,
-          sales: p.sales && p.sales.length ? p.sales : DEMO_SALES,
-        };
-      },
-    }
-  )
+    })
 );

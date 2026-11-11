@@ -43,6 +43,11 @@ export function ProductCard({ product, index, marque, category, onView, onEdit, 
         </div>
         <div className="flex flex-col items-end gap-1 shrink-0">
           <Badge variant="info" className="bg-pistachio/10 text-pistachio hover:bg-pistachio/20 border-0">{category}</Badge>
+          {product.sellOnPos ? (
+            <Badge variant="success" className="bg-pistachio/15 text-pistachio border-0 text-[10px] px-1.5 py-0.5">POS · {formatCurrency(product.sellingPrice || 0)}</Badge>
+          ) : (
+            <Badge variant="info" className="border-0 text-[10px] px-1.5 py-0.5">Production</Badge>
+          )}
           {product.unitEnabled && product.unit && (
             <Badge variant="warning" className="bg-caramel/10 text-caramel hover:bg-caramel/20 border-0 text-[10px] px-1.5 py-0.5">
               {t('unit')}: {product.unit}

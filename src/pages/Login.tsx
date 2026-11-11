@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Pizza, Lock, User, Mail, ChevronDown, Eye, EyeOff, Sandwich } from 'lucide-react';
@@ -25,59 +25,66 @@ export default function Login() {
   const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
   const login = useAuthStore((s) => s.login);
-  const createAccount = useAuthStore((s) => s.createAccount);
-  const hasAccounts = useAuthStore((s) => s.registeredAccounts.length > 0);
+  const createAdminAccount = useAuthStore((s) => s.createAdminAccount);
+  const adminExists = useAuthStore((s) => s.adminExists);
+  const refreshAdminExists = useAuthStore((s) => s.refreshAdminExists);
+  const backendError = useAuthStore((s) => s.backendError);
   const store = useSettingsStore((s) => s.settings);
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
   const [shake, setShake] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
 
-  // On first launch there is no admin account yet — open the creation form directly.
-  const [showCreate, setShowCreate] = useState(!hasAccounts);
+  // The admin-creation option is only offered while no admin account exists
+  // in Supabase. It opens directly on first launch and disappears for good
+  // once the admin account has been created.
+  const canCreateAdmin = adminExists === false;
+  const [showCreate, setShowCreate] = useState(canCreateAdmin);
   const [reg, setReg] = useState({ name: '', username: '', email: '', password: '', confirm: '' });
   const [regErrors, setRegErrors] = useState<Record<string, string>>({});
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => { refreshAdminExists(); }, [refreshAdminExists]);
+  useEffect(() => { if (adminExists === false) setShowCreate(true); if (adminExists) setShowCreate(false); }, [adminExists]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const ok = login({ identifier, password });
-    if (ok) {
+    if (loading) return;
+    setLoading(true);
+    const res = await login({ identifier, password });
+    setLoading(false);
+    if (res.ok) {
       toast.success(t('welcome') + ' 👋');
       navigate(homePathFor(useAuthStore.getState().user));
     } else {
       setShake(true);
       setTimeout(() => setShake(false), 500);
-      toast.error(t('invalidCredentials'));
+      toast.error(res.error || t('invalidCredentials'));
     }
   };
 
-  const handleDemoLogin = () => {
-    const ok = login({ identifier: 'admin', password: 'admin' });
-    if (ok) {
-      toast.success(t('welcome') + ' (Demo Admin) 👋');
-      navigate('/dashboard');
-    } else {
-      toast.error('Erreur lors de la connexion démo');
-    }
-  };
-
-  const handleCreate = (e: React.FormEvent) => {
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (creating) return;
     const errs: Record<string, string> = {};
     if (reg.name.trim().length < 3) errs.name = 'Minimum 3 caractères';
     if (reg.username.trim().length < 3) errs.username = 'Minimum 3 caractères';
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(reg.email)) errs.email = 'Email invalide';
+    else if (reg.username.includes('@') || /\s/.test(reg.username.trim())) errs.username = "Sans espace ni '@'";
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(reg.email.trim())) errs.email = 'Email invalide';
     if (reg.password.length < 6) errs.password = 'Minimum 6 caractères';
     if (reg.password !== reg.confirm) errs.confirm = 'Les mots de passe ne correspondent pas';
     setRegErrors(errs);
     if (Object.keys(errs).length > 0) return;
 
-    const res = createAccount({ name: reg.name, username: reg.username, email: reg.email, password: reg.password });
+    setCreating(true);
+    const res = await createAdminAccount({ name: reg.name, username: reg.username, email: reg.email, password: reg.password });
+    setCreating(false);
     if (res.ok) {
       toast.success(t('accountCreated'));
       setShowCreate(false);
-      setIdentifier(reg.username);
+      setIdentifier(reg.username.trim());
       setReg({ name: '', username: '', email: '', password: '', confirm: '' });
     } else {
       toast.error(res.error || 'Erreur');
@@ -142,7 +149,7 @@ export default function Login() {
             >
               <LogoBadge size={68} icon={36} />
             </motion.div>
-            <h1 className="font-display text-2xl font-bold text-text-primary text-center">{store.name}</h1>
+            <h1 className="font-display text-2xl font-bold text-text-primary text-center">{store.name || 'Gestion'}</h1>
             <p className="text-sm text-text-muted">{store.description}</p>
           </div>
 
@@ -168,38 +175,27 @@ export default function Login() {
                 </button>
               }
             />
-            <Button type="submit" variant="gold" size="lg" className="w-full">
-              {t('login')}
+            <Button type="submit" variant="gold" size="lg" className="w-full" disabled={loading}>
+              {loading ? '…' : t('login')}
             </Button>
           </form>
 
-          <div className="relative flex py-2 items-center">
-            <div className="flex-grow border-t border-gold/15"></div>
-            <span className="flex-shrink mx-4 text-xs text-text-muted font-medium">OU</span>
-            <div className="flex-grow border-t border-gold/15"></div>
-          </div>
-
-          <Button
-            type="button"
-            onClick={handleDemoLogin}
-            variant="outline"
-            size="lg"
-            className="w-full flex items-center justify-center gap-2 border-gold/30 hover:border-gold hover:bg-gold/10 text-gold-dark font-semibold shadow-sm"
-          >
-            <Sandwich size={18} className="animate-pulse text-gold" />
-            Accès Démo Admin (Rapide)
-          </Button>
-
           {/* First-run hint: no admin account exists yet */}
-          {!hasAccounts && (
+          {canCreateAdmin && (
             <p className="text-center text-xs text-text-muted mt-4">
               {t('firstRunHint')}
             </p>
           )}
 
-          {/* Create account */}
+          {adminExists === null && backendError && (
+            <p className="text-center text-xs text-rose-deep mt-4">{backendError}</p>
+          )}
+
+          {/* Create admin account — hidden automatically once an admin exists */}
+          {canCreateAdmin && (
           <div className="mt-4">
             <button
+              type="button"
               onClick={() => setShowCreate(!showCreate)}
               className="flex items-center justify-center gap-1.5 w-full text-sm text-text-secondary hover:text-gold-dark transition-colors py-2"
             >
@@ -226,13 +222,14 @@ export default function Login() {
                     onChange={(e) => setReg({ ...reg, password: e.target.value })} error={regErrors.password} />
                   <Input icon={<Lock size={18} />} type="password" placeholder={t('confirmPassword')} value={reg.confirm}
                     onChange={(e) => setReg({ ...reg, confirm: e.target.value })} error={regErrors.confirm} />
-                  <Button type="submit" variant="rose" className="w-full">
-                    {t('create')}
+                  <Button type="submit" variant="rose" className="w-full" disabled={creating}>
+                    {creating ? '…' : t('create')}
                   </Button>
                 </motion.form>
               )}
             </AnimatePresence>
           </div>
+          )}
         </div>
       </motion.div>
     </div>

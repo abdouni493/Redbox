@@ -171,6 +171,8 @@ export default function Stock() {
               <DetailRow label={t('currentQty')} value={`${viewing.currentQuantity}${viewing.unitEnabled && viewing.unit ? ' ' + viewing.unit : ''}`} />
               <DetailRow label={t('minAlertQty')} value={`${viewing.minAlertQuantity}${viewing.unitEnabled && viewing.unit ? ' ' + viewing.unit : ''}`} />
               <DetailRow label={viewing.unitEnabled && viewing.unit ? `${t('purchasePrice')} / ${viewing.unit}` : t('purchasePrice')} value={formatCurrency(viewing.purchasePrice)} />
+              <DetailRow label="Utilisation" value={viewing.sellOnPos ? 'Vente directe POS + Production' : 'Production uniquement'} />
+              {viewing.sellOnPos && <DetailRow label={viewing.unitEnabled && viewing.unit ? `Prix de vente / ${viewing.unit}` : 'Prix de vente'} value={formatCurrency(viewing.sellingPrice || 0)} />}
               {viewing.expirationEnabled && <DetailRow label={t('expirationDate')} value={formatDate(viewing.expirationDate || '', language)} />}
               <DetailRow label="Créé le" value={formatDate(viewing.createdAt, language)} />
               {viewing.createdBy && <DetailRow label={t('createdBy')} value={viewing.createdBy} />}

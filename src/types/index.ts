@@ -46,6 +46,13 @@ export interface Product {
   unit?: string;
   expirationEnabled: boolean;
   expirationDate: string | null;
+  // "Vente directe au POS": when ON the product is shown in the point of sale
+  // and sold directly from stock at `sellingPrice` (per piece, or per `unit`
+  // when unitEnabled). When OFF the product is reserved for production
+  // (ingredient in fiches techniques). Every stock product stays usable as an
+  // ingredient in fiches techniques either way.
+  sellOnPos?: boolean;
+  sellingPrice?: number;
   createdAt: string;
   createdBy?: string;
 }
@@ -124,6 +131,10 @@ export interface SaleLine {
   // When the production product is sold by unit (g / kg / …)
   sellByUnit?: boolean;
   unit?: string;
+  // Where the sold item comes from: the comptoir (default) or directly from
+  // stock (products flagged "vente directe au POS"). Stock lines decrease the
+  // stock quantity of `productId` instead of the comptoir.
+  source?: 'comptoir' | 'stock';
 }
 
 export type SaleStatus = 'paid' | 'debt';
@@ -276,7 +287,10 @@ export interface Worker {
   hasAccount: boolean;
   email: string;
   username: string;
+  // Only used in the creation/edit form — never stored in the database.
   password?: string;
+  // Supabase auth user linked to this worker (login account)
+  authUserId?: string | null;
   startDate: string;
   permissions: WorkerPermissions;
   acomptes: Acompte[];
@@ -359,6 +373,11 @@ export interface StoreSettings {
   nis: string;
   article: string;
   rc: string;
+  // Image optimisation: images are resized + compressed in the browser
+  // before being uploaded to the Supabase storage buckets.
+  imageOptimize?: boolean;
+  imageMaxSize?: number;   // max width/height in px
+  imageQuality?: number;   // 0.3 – 0.95 (WebP/JPEG quality)
 }
 
 // ---------- Auth ----------

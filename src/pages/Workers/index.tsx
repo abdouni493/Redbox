@@ -55,7 +55,7 @@ export default function WorkersPage() {
                 <div className="min-w-0">
                   <h3 className="font-display font-semibold text-text-primary truncate">{w.fullName}</h3>
                   <div className="flex flex-wrap gap-1">
-                    <Badge variant="gold">{roleName(w.roleId)}</Badge>
+                    {roles.some((r) => r.id === w.roleId) && <Badge variant="gold">{roleName(w.roleId)}</Badge>}
                     {w.post && w.post !== 'general' && <Badge variant="info">{POST_LABELS[w.post]}</Badge>}
                   </div>
                 </div>
@@ -111,7 +111,7 @@ export default function WorkersPage() {
         {active && (
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
-              <Detail label={t('role')} value={roleName(active.roleId)} />
+              {roles.some((r) => r.id === active.roleId) && <Detail label={t('role')} value={roleName(active.roleId)} />}
               <Detail label="Poste" value={POST_LABELS[active.post || 'general']} />
               <Detail label={t('phone')} value={active.phone} />
               <Detail label={t('birthday')} value={formatDate(active.birthday, language)} />

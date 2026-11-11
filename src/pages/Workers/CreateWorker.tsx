@@ -32,7 +32,6 @@ export function CreateWorker({ initial, onClose }: CreateWorkerProps) {
     birthday: initial?.birthday || '',
     idCardNumber: initial?.idCardNumber || '',
     phone: initial?.phone || '',
-    roleId: initial?.roleId || '',
     post: (initial?.post || 'general') as WorkerPost,
     startDate: initial?.startDate || todayISO(),
     paymentEnabled: initial?.paymentEnabled ?? true,

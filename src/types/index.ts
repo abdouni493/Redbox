@@ -279,7 +279,7 @@ export interface Worker {
   birthday: string;
   idCardNumber: string;
   phone: string;
-  roleId: string;
+  roleId?: string; // legacy — no longer used (workers are defined by their post)
   post?: WorkerPost;
   paymentEnabled: boolean;
   paymentType: PaymentType;

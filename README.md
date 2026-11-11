@@ -22,6 +22,14 @@ Application web complète de gestion de pâtisserie : stock, achats, production,
 3. Lancez l'application : la page de connexion propose **« Créer un compte admin »** tant qu'aucun administrateur n'existe. Ce bouton disparaît automatiquement après la création du compte.
 4. Les comptes employés sont créés depuis **Employés → Compte de connexion** (ils apparaissent dans Supabase → Authentication → Users). Connexion par email **ou** nom d'utilisateur.
 
+> **Mise à jour** : si la base a été installée avec une version précédente, exécutez aussi [`supabase/update_sync_v2.sql`](supabase/update_sync_v2.sql) (ou relancez `schema.sql`).
+
+### 🔄 Fiabilité de l'enregistrement
+
+- Chaque modification passe par une file d'attente sauvegardée sur l'appareil : sans Internet, rien n'est perdu, tout est envoyé automatiquement au retour de la connexion (indicateur ☁️ dans l'en-tête).
+- Les quantités (stock, comptoir, production) sont modifiées par incréments atomiques dans la base : deux caisses qui vendent en même temps ne s'écrasent jamais.
+- Les modifications refusées par la base sont conservées et peuvent être renvoyées depuis l'indicateur.
+
 ### 🖼️ Images
 
 Les images (produits, fiches techniques, logo) sont redimensionnées et compressées en **WebP** dans le navigateur, puis enregistrées dans les buckets Supabase (seule l'URL est stockée en base). Réglages et conversion des anciennes images : **Paramètres → Images**.

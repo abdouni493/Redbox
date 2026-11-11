@@ -23,8 +23,12 @@ export const usePurchaseStore = create<PurchaseState>()(
       purchases: [],
 
       nextReference: () => {
-        const n = get().purchases.length + 1;
-        return `FAC-${String(n).padStart(3, '0')}`;
+        // Highest existing number + 1 (robust to deletions)
+        const max = get().purchases.reduce((m, x) => {
+          const n = parseInt(String(x.reference || '').replace(/\D/g, ''), 10);
+          return Number.isFinite(n) && n > m ? n : m;
+        }, 0);
+        return `FAC-${String(max + 1).padStart(3, '0')}`;
       },
 
       addPurchase: ({ supplierId, date, products, paidAmount }) => {

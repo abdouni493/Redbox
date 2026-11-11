@@ -80,7 +80,7 @@ export function CaisseGate() {
           />
           <Input label="Note (optionnel)" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Ex : billets de 1000 × 5, pièces…" />
           <div className="flex gap-2 pt-1">
-            <Button variant="secondary" onClick={() => { logout(); navigate('/login'); }}><LogOut size={16} /> Déconnexion</Button>
+            <Button variant="secondary" onClick={async () => { await logout(); navigate('/login'); }}><LogOut size={16} /> Déconnexion</Button>
             <Button variant="gold" className="flex-1" onClick={submit}><Wallet size={16} /> Ouvrir la caisse</Button>
           </div>
         </div>

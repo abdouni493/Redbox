@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { toast } from '@/components/ui/Toast';
 import { formatDateTime } from '@/lib/utils';
+import { SyncIndicator } from './SyncIndicator';
 
 const POST_LABELS: Record<string, string> = { kitchen: 'Cuisine', cashier: 'Caissier', deliverer: 'Livreur' };
 
@@ -45,6 +46,7 @@ export function Header({ onMenuClick }: HeaderProps) {
       <div className="flex-1" />
 
       <div className="flex items-center gap-3">
+        <SyncIndicator />
         {/* Cash session indicator */}
         {active ? (
           <button

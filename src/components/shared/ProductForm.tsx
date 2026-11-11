@@ -40,6 +40,8 @@ export function ProductForm({ initial, onSubmit, onCancel }: ProductFormProps) {
     unit: initial?.unit || '',
     expirationEnabled: initial?.expirationEnabled ?? false,
     expirationDate: initial?.expirationDate || '',
+    sellOnPos: initial?.sellOnPos ?? false,
+    sellingPrice: initial?.sellingPrice ?? 0,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [miniModal, setMiniModal] = useState<'marque' | 'category' | null>(null);
@@ -86,6 +88,7 @@ export function ProductForm({ initial, onSubmit, onCancel }: ProductFormProps) {
     if (!form.name.trim()) errs.name = 'Nom requis';
     if (!form.marqueId) errs.marqueId = 'Marque requise';
     if (!form.categoryId) errs.categoryId = 'Catégorie requise';
+    if (form.sellOnPos && !(Number(form.sellingPrice) > 0)) errs.sellingPrice = 'Prix de vente requis pour la vente au POS';
     setErrors(errs);
     if (Object.keys(errs).length) return;
 
@@ -104,13 +107,15 @@ export function ProductForm({ initial, onSubmit, onCancel }: ProductFormProps) {
       unit: form.unitEnabled ? form.unit || undefined : undefined,
       expirationEnabled: form.expirationEnabled,
       expirationDate: form.expirationEnabled ? form.expirationDate || null : null,
+      sellOnPos: form.sellOnPos,
+      sellingPrice: form.sellOnPos ? Number(form.sellingPrice) : 0,
     });
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <Input label={`${t('productName')} *`} value={form.name} onChange={(e) => set('name', e.target.value)} error={errors.name} />
-      <ImageUpload label={t('image')} value={form.image} onChange={(v) => set('image', v)} />
+      <ImageUpload label={t('image')} value={form.image} onChange={(v) => set('image', v)} folder="products" />
       <Textarea label={t('description')} value={form.description} onChange={(e) => set('description', e.target.value)} />
 
       {/* Barcode */}
@@ -172,6 +177,37 @@ export function ProductForm({ initial, onSubmit, onCancel }: ProductFormProps) {
             <UnitSelect label={t('unit')} value={form.unit} onChange={(u) => set('unit', u)} className="min-w-[220px]" />
             <p className="text-xs text-text-muted pb-2.5">{t('purchasePrice')} = {t('pricePerUnit')}</p>
           </div>
+        )}
+      </div>
+
+      {/* Usage: direct sale on POS (optional) — always usable in production */}
+      <div className={`rounded-xl p-3 border space-y-3 transition-colors ${form.sellOnPos ? 'bg-pistachio/5 border-pistachio/30' : 'bg-vanilla/40 border-gold/15'}`}>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <Switch checked={form.sellOnPos} onChange={(v) => set('sellOnPos', v)} label="Vente directe au point de vente (POS)" />
+          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${form.sellOnPos ? 'bg-pistachio/15 text-pistachio' : 'bg-gold/10 text-gold-dark'}`}>
+            {form.sellOnPos ? 'POS + Production' : 'Production uniquement'}
+          </span>
+        </div>
+        {form.sellOnPos ? (
+          <div className="flex flex-wrap items-end gap-3">
+            <Input
+              label={`Prix de vente (DA)${form.unitEnabled && form.unit ? ` / ${form.unit}` : ''} *`}
+              type="number"
+              step="any"
+              min="0"
+              value={form.sellingPrice}
+              onChange={(e) => set('sellingPrice', e.target.value)}
+              error={errors.sellingPrice}
+              className="max-w-[220px]"
+            />
+            <p className="text-xs text-text-muted pb-2.5 flex-1 min-w-[200px]">
+              Le produit apparaît directement dans le POS et sa vente diminue la quantité en stock. Il reste utilisable comme ingrédient dans les fiches techniques.
+            </p>
+          </div>
+        ) : (
+          <p className="text-xs text-text-muted">
+            Désactivé : le produit est réservé à la production (ingrédient des fiches techniques) et n'apparaît pas au POS.
+          </p>
         )}
       </div>
 

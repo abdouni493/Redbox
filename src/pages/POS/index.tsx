@@ -20,6 +20,7 @@ import { useSalesStore } from '@/store/salesStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useCommandStore, type Command, type CommandLine } from '@/store/commandStore';
 import { useFicheTechnicStore } from '@/store/ficheTechnicStore';
+import { useStockStore } from '@/store/stockStore';
 import { useLanguage } from '@/hooks/useLanguage';
 import { usePermissions } from '@/hooks/usePermissions';
 import { formatCurrency, todayISO } from '@/lib/utils';
@@ -35,6 +36,7 @@ type Source = 'comptoir' | 'recipes';
 interface CartLine {
   key: string;
   comptoirItemId?: string;
+  stockProductId?: string;
   ficheTechnicId?: string;
   productName: string;
   image?: string | null;
@@ -48,6 +50,7 @@ interface CartLine {
 interface CatalogItem {
   key: string;
   comptoirItemId?: string;
+  stockProductId?: string;
   ficheTechnicId?: string;
   productName: string;
   image?: string | null;
@@ -69,6 +72,8 @@ export default function POS() {
 
   const items = useComptoirStore((s) => s.items);
   const fiches = useFicheTechnicStore((s) => s.ficheTechnics);
+  const stockProducts = useStockStore((s) => s.products);
+  const stockCategories = useStockStore((s) => s.categories);
   const { clients, addClient, getOrCreatePassager } = useClientStore();
   const addSale = useSalesStore((s) => s.addSale);
   const { commands, addCommand, updateCommand, payDebt } = useCommandStore();
@@ -112,6 +117,14 @@ export default function POS() {
     }
     setMode('command');
     setCart(editing.items.map((l, i) => {
+      if (l.stockProductId) {
+        const sp = stockProducts.find((x) => x.id === l.stockProductId);
+        return {
+          key: `stk-${l.stockProductId}`, stockProductId: l.stockProductId, productName: l.productName,
+          image: l.image ?? sp?.image, unitPrice: l.unitPrice, quantity: l.quantity,
+          available: sp ? sp.currentQuantity : Infinity, sellByUnit: l.sellByUnit, unit: l.sellUnit,
+        };
+      }
       const comp = l.comptoirItemId ? items.find((x) => x.id === l.comptoirItemId) : items.find((x) => x.productName === l.productName);
       return {
         key: l.comptoirItemId || l.ficheTechnicId || `line-${i}-${l.productName}`,
@@ -146,7 +159,7 @@ export default function POS() {
     setPaid(0);
     setPaidEdited(true);
     setLoadedEditId(editId);
-  }, [editId, editing, loadedEditId, items, navigate]);
+  }, [editId, editing, loadedEditId, items, stockProducts, navigate]);
 
   // ---- Catalog ----
   const catalog: CatalogItem[] = useMemo(() => {
@@ -156,14 +169,24 @@ export default function POS() {
         quantity: Infinity, categoryName: f.categoryName, sellByUnit: f.sellByUnit, unit: f.sellUnit,
       }));
     }
-    return items
+    const comptoirItems: CatalogItem[] = items
       // Commands can be placed even if the product is momentarily out of stock
       .filter((i) => mode === 'command' || i.quantity > 0)
       .map((i) => ({
         key: i.id, comptoirItemId: i.id, productName: i.productName, image: i.image, unitPrice: i.unitPrice,
         quantity: i.quantity, categoryName: i.categoryName, sellByUnit: i.sellByUnit, unit: i.unit,
       }));
-  }, [mode, source, items, fiches]);
+    // Stock products flagged "vente directe au POS" are sold straight from stock.
+    const direct: CatalogItem[] = stockProducts
+      .filter((p) => p.sellOnPos && (p.sellingPrice ?? 0) > 0 && (mode === 'command' || p.currentQuantity > 0))
+      .map((p) => ({
+        key: `stk-${p.id}`, stockProductId: p.id, productName: p.name, image: p.image, unitPrice: p.sellingPrice || 0,
+        quantity: p.currentQuantity,
+        categoryName: stockCategories.find((c) => c.id === p.categoryId)?.name,
+        sellByUnit: !!(p.unitEnabled && p.unit), unit: p.unitEnabled ? p.unit : undefined,
+      }));
+    return [...comptoirItems, ...direct];
+  }, [mode, source, items, fiches, stockProducts, stockCategories]);
 
   const categoryOptions = useMemo(() => {
     const set = new Set<string>();
@@ -198,7 +221,7 @@ export default function POS() {
     } else {
       if (item.quantity < 1 && strictStock) { toast.warning('Stock insuffisant'); return; }
       setCart([...cart, {
-        key: item.key, comptoirItemId: item.comptoirItemId, ficheTechnicId: item.ficheTechnicId, productName: item.productName,
+        key: item.key, comptoirItemId: item.comptoirItemId, stockProductId: item.stockProductId, ficheTechnicId: item.ficheTechnicId, productName: item.productName,
         image: item.image, unitPrice: item.unitPrice, quantity: 1, available: item.quantity, sellByUnit: item.sellByUnit, unit: item.unit,
       }]);
     }
@@ -253,7 +276,7 @@ export default function POS() {
     const sale = addSale({
       clientId: saleClientId,
       date: new Date().toISOString(),
-      products: cart.map((c) => ({ productId: c.comptoirItemId || c.key, productName: c.productName, quantity: c.quantity, sellingPrice: c.unitPrice, sellByUnit: c.sellByUnit, unit: c.unit })),
+      products: cart.map((c) => ({ productId: c.stockProductId || c.comptoirItemId || c.key, source: c.stockProductId ? 'stock' as const : 'comptoir' as const, productName: c.productName, quantity: c.quantity, sellingPrice: c.unitPrice, sellByUnit: c.sellByUnit, unit: c.unit })),
       reduction: reductionEnabled ? Number(reduction) : 0,
       // Never record more than the amount due (the change is handed back).
       paidAmount: Math.min(Number(effectivePaid), finalAmount),
@@ -268,6 +291,7 @@ export default function POS() {
     cart.map((c) => ({
       ficheTechnicId: c.ficheTechnicId || '',
       comptoirItemId: c.comptoirItemId,
+      stockProductId: c.stockProductId,
       image: c.image,
       productName: c.productName,
       quantity: c.quantity,

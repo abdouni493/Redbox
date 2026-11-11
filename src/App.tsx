@@ -40,13 +40,29 @@ function PrivateRoute({ children }: { children: ReactNode }) {
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 }
 
+function BootScreen() {
+  return (
+    <div className="min-h-screen w-full bg-gradient-hero flex flex-col items-center justify-center gap-4 text-amber-100">
+      <div className="h-12 w-12 rounded-full border-4 border-amber-200/30 border-t-amber-200 animate-spin" />
+      <p className="text-sm font-medium">Connexion à la base de données…</p>
+    </div>
+  );
+}
+
 export default function App() {
   const language = useAuthStore((s) => s.language);
+  const ready = useAuthStore((s) => s.ready);
+  const init = useAuthStore((s) => s.init);
 
   useEffect(() => {
     document.documentElement.setAttribute('dir', language === 'ar' ? 'rtl' : 'ltr');
     document.documentElement.setAttribute('lang', language);
   }, [language]);
+
+  // Restore the Supabase session (if any) and load all data once.
+  useEffect(() => { init(); }, [init]);
+
+  if (!ready) return <BootScreen />;
 
   return (
     <>

@@ -9,6 +9,7 @@ import { useWorkerStore, permissionsForPost } from '@/store/workerStore';
 import { useLanguage } from '@/hooks/useLanguage';
 import { toast } from '@/components/ui/Toast';
 import { todayISO } from '@/lib/utils';
+import { createWorkerAccount, updateWorkerAccount, deleteWorkerAccount } from '@/lib/accounts';
 import type { Worker, WorkerPost } from '@/types';
 
 const POSTS: { key: WorkerPost; label: string; desc: string; icon: typeof ChefHat }[] = [
@@ -41,7 +42,7 @@ export function CreateWorker({ initial, onClose }: CreateWorkerProps) {
     hasAccount: initial?.hasAccount ?? false,
     email: initial?.email || '',
     username: initial?.username || '',
-    password: initial?.password || '',
+    password: '',
   });
   const [roleModal, setRoleModal] = useState(false);
   const [roleName, setRoleName] = useState('');
@@ -56,27 +57,76 @@ export function CreateWorker({ initial, onClose }: CreateWorkerProps) {
     setRoleName(''); setRoleModal(false);
   };
 
-  const handleSubmit = () => {
+  const [saving, setSaving] = useState(false);
+
+  const handleSubmit = async () => {
     const errs: Record<string, string> = {};
     if (!form.fullName.trim()) errs.fullName = 'Nom requis';
     if (!form.phone.trim()) errs.phone = 'Téléphone requis';
     if (!form.roleId) errs.roleId = 'Rôle requis';
+    const needsNewAccount = form.hasAccount && !initial?.authUserId;
+    if (form.hasAccount) {
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) errs.email = 'Email valide requis';
+      if (form.username.trim().length < 3 || /[\s@]/.test(form.username.trim())) errs.username = "3 caractères min., sans espace ni '@'";
+      if (needsNewAccount && form.password.length < 6) errs.password = 'Minimum 6 caractères';
+      if (!needsNewAccount && form.password && form.password.length < 6) errs.password = 'Minimum 6 caractères';
+    }
     setErrors(errs);
     if (Object.keys(errs).length) return;
 
     if (form.post !== 'general' && !form.hasAccount) {
       toast.warning('Astuce : activez le compte de connexion pour que cet employé accède à son interface.');
     }
-    if (initial) {
-      updateWorker(initial.id, { ...form, paymentType: form.paymentType as 'monthly' | 'daily', paymentAmount: Number(form.paymentAmount) });
-      // Changing the post applies its default interfaces
-      if (form.post !== (initial.post || 'general')) setPermissions(initial.id, permissionsForPost(form.post, initial.permissions));
-      toast.success('Employé modifié');
-    } else {
-      addWorker({ ...form, paymentType: form.paymentType as 'monthly' | 'daily', paymentAmount: Number(form.paymentAmount) });
-      toast.success('Employé créé');
+    // The password is never stored with the worker — only in Supabase Auth.
+    const { password, ...rest } = form;
+    const data = {
+      ...rest,
+      email: form.hasAccount ? form.email.trim().toLowerCase() : form.email,
+      username: form.hasAccount ? form.username.trim() : form.username,
+      paymentType: form.paymentType as 'monthly' | 'daily',
+      paymentAmount: Number(form.paymentAmount),
+    };
+
+    setSaving(true);
+    try {
+      let workerId: string;
+      let authUserId = initial?.authUserId ?? null;
+      if (initial) {
+        workerId = initial.id;
+        updateWorker(initial.id, { ...data, password: undefined });
+        // Changing the post applies its default interfaces
+        if (form.post !== (initial.post || 'general')) setPermissions(initial.id, permissionsForPost(form.post, initial.permissions));
+      } else {
+        workerId = addWorker({ ...data, authUserId: null }).id;
+      }
+
+      // ---- Supabase Auth account ----
+      if (form.hasAccount && !authUserId) {
+        const res = await createWorkerAccount({ workerId, name: form.fullName, username: data.username, email: data.email, password });
+        if (!res.ok) {
+          updateWorker(workerId, { hasAccount: false });
+          toast.error(`Employé enregistré, mais compte non créé : ${res.error}`);
+          return;
+        }
+        authUserId = res.data ?? null;
+        updateWorker(workerId, { authUserId });
+        toast.success(initial ? 'Employé modifié — compte de connexion créé' : 'Employé et compte de connexion créés');
+      } else if (form.hasAccount && authUserId) {
+        const res = await updateWorkerAccount({ userId: authUserId, name: form.fullName, username: data.username, email: data.email, password: password || undefined });
+        if (!res.ok) { toast.error(`Compte non mis à jour : ${res.error}`); return; }
+        toast.success('Employé modifié');
+      } else if (!form.hasAccount && authUserId) {
+        const res = await deleteWorkerAccount(authUserId);
+        if (!res.ok) { toast.error(`Compte non supprimé : ${res.error}`); return; }
+        updateWorker(workerId, { authUserId: null });
+        toast.success('Employé modifié — compte de connexion supprimé');
+      } else {
+        toast.success(initial ? 'Employé modifié' : 'Employé créé');
+      }
+      onClose();
+    } finally {
+      setSaving(false);
     }
-    onClose();
   };
 
   return (
@@ -135,17 +185,22 @@ export function CreateWorker({ initial, onClose }: CreateWorkerProps) {
         <Switch checked={form.hasAccount} onChange={(v) => set('hasAccount', v)} label={t('accountActive')} />
         {form.hasAccount && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <Input label={t('email')} value={form.email} onChange={(e) => set('email', e.target.value)} />
-            <Input label={t('username')} value={form.username} onChange={(e) => set('username', e.target.value)} />
-            <Input label={t('password')} type="text" value={form.password} onChange={(e) => set('password', e.target.value)} />
+            <Input label={`${t('email')} *`} value={form.email} onChange={(e) => set('email', e.target.value)} error={errors.email} />
+            <Input label={`${t('username')} *`} value={form.username} onChange={(e) => set('username', e.target.value)} error={errors.username} />
+            <Input label={initial?.authUserId ? `${t('password')} (laisser vide = inchangé)` : `${t('password')} *`} type="text" value={form.password} onChange={(e) => set('password', e.target.value)} error={errors.password} />
           </div>
+        )}
+        {form.hasAccount && (
+          <p className="text-xs text-text-muted">
+            {initial?.authUserId ? 'Compte Supabase actif — l\'employé se connecte avec son email ou son nom d\'utilisateur.' : 'Le compte sera créé dans Supabase Authentication à l\'enregistrement.'}
+          </p>
         )}
         {form.hasAccount && form.post === 'general' && <p className="text-xs text-text-muted">Le compte est créé sans permissions — configurez-les via le bouton « Permissions ».</p>}
       </section>
 
       <div className="flex justify-end gap-3">
         <Button variant="secondary" onClick={onClose}>{t('cancel')}</Button>
-        <Button variant="gold" onClick={handleSubmit}>{t('save')}</Button>
+        <Button variant="gold" onClick={handleSubmit} disabled={saving}>{saving ? '…' : t('save')}</Button>
       </div>
 
       <Modal open={roleModal} onClose={() => setRoleModal(false)} title={t('newRole')} size="sm">

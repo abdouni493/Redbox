@@ -18,7 +18,6 @@ export function setKitchenPrinterDevice(v: boolean) {
 
 /**
  * Background watcher mounted in the app layout:
- *  - keeps the command list in sync between browser tabs (localStorage events)
  *  - when "auto print kitchen" is ON and this device is a kitchen station
  *    (kitchen profile, or flagged in the commands options), prints a kitchen
  *    ticket for every pending command that has not been printed yet.
@@ -29,16 +28,7 @@ export function KitchenAutoPrint() {
   const commands = useCommandStore((s) => s.commands);
   const printing = useRef(new Set<string>());
 
-  // Cross-tab sync of the persisted command store
-  useEffect(() => {
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === 'boulengerie-commands') useCommandStore.persist.rehydrate();
-    };
-    window.addEventListener('storage', onStorage);
-    // Fallback polling (same-device multi-window setups)
-    const id = window.setInterval(() => useCommandStore.persist.rehydrate(), 15000);
-    return () => { window.removeEventListener('storage', onStorage); window.clearInterval(id); };
-  }, []);
+  // Commands are kept in sync across devices by Supabase Realtime (see lib/cloudSync).
 
   const isStation = !!user && (user.post === 'kitchen' || isKitchenPrinterDevice());
 

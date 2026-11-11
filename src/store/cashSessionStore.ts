@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import type { CashSession } from '@/types';
 import { uid } from '@/lib/utils';
 import { useAuthStore, getCurrentUsername } from './authStore';
@@ -12,7 +11,6 @@ interface CashSessionState {
 }
 
 export const useCashSessionStore = create<CashSessionState>()(
-  persist(
     (set, get) => ({
       sessions: [],
 
@@ -56,9 +54,7 @@ export const useCashSessionStore = create<CashSessionState>()(
         }),
 
       deleteSession: (id) => set({ sessions: get().sessions.filter((s) => s.id !== id) }),
-    }),
-    { name: 'boulengerie-cash-sessions' }
-  )
+    })
 );
 
 /** Open caisse session of the currently logged-in user, if any. */

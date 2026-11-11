@@ -1,4 +1,4 @@
-import type { StoreSettings } from '@/types';
+import type { StoreSettings, OrderServiceInfo } from '@/types';
 import { formatCurrency, formatDate, formatDateTime } from './utils';
 
 interface InvoiceLine {
@@ -20,6 +20,22 @@ interface InvoiceData {
   final?: number;
   paid: number;
   rest: number;
+  service?: OrderServiceInfo;
+}
+
+const SERVICE_LABELS = { table: 'Sur place', takeaway: 'À emporter', delivery: 'Livraison' } as const;
+
+function serviceHtml(s?: OrderServiceInfo): string {
+  if (!s?.orderType) return '';
+  let label: string = SERVICE_LABELS[s.orderType];
+  if (s.orderType === 'table' && s.tableNumber) label += ` · Table ${s.tableNumber}`;
+  let html = `<br/><span class="lbl">Service</span> <strong style="font-size:13px">${label}</strong>`;
+  if (s.orderType === 'delivery') {
+    if (s.deliveryAddress) html += `<br/>📍 ${s.deliveryAddress}`;
+    if (s.deliveryPhone) html += `<br/>📞 ${s.deliveryPhone}`;
+    if (s.delivererName) html += `<br/>🛵 Livreur : ${s.delivererName}`;
+  }
+  return html;
 }
 
 const css = `
@@ -139,6 +155,7 @@ export function printInvoice(data: InvoiceData, store: StoreSettings) {
               <strong>${data.partyName}</strong><br/>
               ${data.partyAddress ? data.partyAddress + '<br/>' : ''}
               ${data.partyPhone ? '📞 ' + data.partyPhone : ''}
+              ${serviceHtml(data.service)}
             </div>
 
             <table>

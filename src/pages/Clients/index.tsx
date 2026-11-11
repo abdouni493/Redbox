@@ -41,6 +41,8 @@ export default function ClientsPage() {
   const stats = (clientId: string) => {
     const cs = sales.filter((s) => s.clientId === clientId);
     const cc = commands.filter((c) => c.clientId === clientId);
+    // Finalised commands were converted into sales — count their money only once.
+    const ccOpen = cc.filter((c) => !c.saleId);
     return {
       count: cs.length,
       total: cs.reduce((s, x) => s + x.finalAmount, 0),
@@ -48,9 +50,9 @@ export default function ClientsPage() {
       rest: cs.reduce((s, x) => s + x.restAmount, 0),
       list: cs,
       commandsCount: cc.length,
-      commandsTotal: cc.reduce((s, x) => s + x.totalAmount, 0),
-      commandsPaid: cc.reduce((s, x) => s + x.paidAmount, 0),
-      commandsRest: cc.reduce((s, x) => s + x.restAmount, 0),
+      commandsTotal: ccOpen.reduce((s, x) => s + x.totalAmount, 0),
+      commandsPaid: ccOpen.reduce((s, x) => s + x.paidAmount, 0),
+      commandsRest: ccOpen.reduce((s, x) => s + x.restAmount, 0),
       commandsList: cc,
     };
   };
@@ -68,7 +70,7 @@ export default function ClientsPage() {
       <PageHeader title={t('clients')} icon={<Users size={24} />} subtitle={`${clients.length} clients`}
         actions={
           <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => navigate('/clients/commands')}><ShoppingCart size={18} /> Commandes</Button>
+            <Button variant="secondary" onClick={() => navigate('/commands')}><ShoppingCart size={18} /> Commandes</Button>
             {can('clients', 'create') && <Button variant="gold" onClick={() => { setEditing(null); setFormOpen(true); }}><Plus size={18} /> {t('newClient')}</Button>}
           </div>
         } />

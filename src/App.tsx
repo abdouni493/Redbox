@@ -6,6 +6,7 @@ import { ToastViewport } from '@/components/ui/Toast';
 
 import Login from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
+import CashierDashboard from '@/pages/CashierDashboard';
 import Stock from '@/pages/Stock';
 import Purchase from '@/pages/Purchase';
 import Production from '@/pages/Production';
@@ -13,7 +14,8 @@ import Comptoir from '@/pages/Comptoir';
 import POS from '@/pages/POS';
 import Sales from '@/pages/Sales';
 import Clients from '@/pages/Clients';
-import Commands from '@/pages/Clients/Commands';
+import Commands from '@/pages/Commands';
+import { homePathFor } from '@/lib/home';
 import Suppliers from '@/pages/Suppliers';
 import Workers from '@/pages/Workers';
 import Expenses from '@/pages/Expenses';
@@ -22,6 +24,16 @@ import CaisseReports from '@/pages/Caisse/CaisseReports';
 import ComptoirStats from '@/pages/Caisse/ComptoirStats';
 import Reports from '@/pages/Reports';
 import SettingsPage from '@/pages/Settings';
+
+function DashboardRoute() {
+  const user = useAuthStore((s) => s.user);
+  return user?.role !== 'admin' && user?.post === 'cashier' ? <CashierDashboard /> : <Dashboard />;
+}
+
+function HomeRedirect() {
+  const user = useAuthStore((s) => s.user);
+  return <Navigate to={user ? homePathFor(user) : '/login'} replace />;
+}
 
 function PrivateRoute({ children }: { children: ReactNode }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -48,7 +60,7 @@ export default function App() {
             </PrivateRoute>
           }
         >
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<DashboardRoute />} />
           <Route path="/stock" element={<Stock />} />
           <Route path="/purchase" element={<Purchase />} />
           <Route path="/production" element={<Production />} />
@@ -56,7 +68,8 @@ export default function App() {
           <Route path="/pos" element={<POS />} />
           <Route path="/sales" element={<Sales />} />
           <Route path="/clients" element={<Clients />} />
-          <Route path="/clients/commands" element={<Commands />} />
+          <Route path="/clients/commands" element={<Navigate to="/commands" replace />} />
+          <Route path="/commands" element={<Commands />} />
           <Route path="/suppliers" element={<Suppliers />} />
           <Route path="/workers" element={<Workers />} />
           <Route path="/expenses" element={<Expenses />} />
@@ -66,7 +79,7 @@ export default function App() {
           <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Route>
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<HomeRedirect />} />
       </Routes>
     </>
   );

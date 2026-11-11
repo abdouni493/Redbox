@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { CaisseSessions } from './CaisseSessions';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileText, Plus, ArrowLeft, Pencil, Trash2, Eye, Calendar, Clock, Coins,
   Receipt, ShoppingCart, Banknote, HardHat, Flame, TrendingUp, AlertTriangle,
   CheckCircle2, Wallet, Scale, CakeSlice, Store, Package, Tag, ArrowDownLeft,
-  ArrowUpRight, ArrowRightLeft, User, Filter, CalendarRange,
+  ArrowUpRight, ArrowRightLeft, User, Filter, CalendarRange, Users,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/Button';
@@ -325,6 +326,9 @@ export default function CaisseReportsPage() {
 
   const stores: DetailStores = { sales, purchases, expenses, destructions, workers, transactions, productions, products, productCategories, comptoirItems, suppliers };
 
+  const [params, setParams] = useSearchParams();
+  const view: 'reports' | 'workers' = params.get('tab') === 'workers' ? 'workers' : 'reports';
+  const setView = (v: 'reports' | 'workers') => { params.set('tab', v); setParams(params, { replace: true }); };
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<CaisseReport | null>(null);
   const [form, setForm] = useState({
@@ -410,10 +414,28 @@ export default function CaisseReportsPage() {
         actions={
           <div className="flex flex-wrap gap-2">
             <Button variant="secondary" onClick={() => navigate('/caisse')}><ArrowLeft size={18} /> {t('backToCaisse')}</Button>
-            {can('caisse', 'create') && <Button variant="gold" onClick={openCreate}><Plus size={18} /> {t('newCaisseReport')}</Button>}
+            {view === 'reports' && can('caisse', 'create') && <Button variant="gold" onClick={openCreate}><Plus size={18} /> {t('newCaisseReport')}</Button>}
           </div>
         }
       />
+
+      {/* View switch: global reports vs caisse of each worker */}
+      <div className="grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-white/70 border border-gold/15 shadow-sm mb-5 max-w-lg">
+        {([
+          { key: 'reports', label: 'Rapports globaux', icon: FileText },
+          { key: 'workers', label: 'Caisses par employé', icon: Users },
+        ] as const).map((o) => {
+          const Icon = o.icon;
+          const active = view === o.key;
+          return (
+            <button key={o.key} onClick={() => setView(o.key)} className={`flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-semibold transition-all ${active ? 'bg-gradient-button text-white shadow-gold' : 'text-text-secondary hover:bg-gold/10'}`}>
+              <Icon size={16} /> {o.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {view === 'workers' ? <CaisseSessions /> : (<>
 
       {/* Filter bar */}
       <Card index={0} className="mb-6">
@@ -495,6 +517,8 @@ export default function CaisseReportsPage() {
           })}
         </div>
       )}
+
+      </>)}
 
       {/* Create / edit modal */}
       <Modal open={formOpen} onClose={() => setFormOpen(false)} title={editing ? t('edit') : t('newCaisseReport')} size="sm">

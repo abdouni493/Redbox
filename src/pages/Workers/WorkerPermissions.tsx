@@ -20,6 +20,7 @@ const moduleActions: Record<string, Array<'view' | 'create' | 'edit' | 'delete' 
   production: ['view', 'create', 'edit', 'delete'],
   comptoir: ['view', 'delete'],
   pos: ['view', 'create'],
+  commands: ['view', 'create', 'edit', 'delete', 'pay'],
   sales: ['view', 'create', 'edit', 'delete', 'pay'],
   clients: ['view', 'create', 'edit', 'delete'],
   suppliers: ['view', 'create', 'edit', 'delete'],

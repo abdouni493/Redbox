@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Plus, Settings2, ChefHat, Wallet, Bike } from 'lucide-react';
+import { Settings2, ChefHat, Wallet, Bike } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Switch } from '@/components/ui/Switch';
-import { Modal } from '@/components/ui/Modal';
 import { useWorkerStore, permissionsForPost } from '@/store/workerStore';
 import { useLanguage } from '@/hooks/useLanguage';
 import { toast } from '@/components/ui/Toast';
@@ -26,7 +25,7 @@ interface CreateWorkerProps {
 
 export function CreateWorker({ initial, onClose }: CreateWorkerProps) {
   const { t } = useLanguage();
-  const { roles, addRole, addWorker, updateWorker, setPermissions } = useWorkerStore();
+  const { addWorker, updateWorker, setPermissions } = useWorkerStore();
 
   const [form, setForm] = useState({
     fullName: initial?.fullName || '',
@@ -44,18 +43,9 @@ export function CreateWorker({ initial, onClose }: CreateWorkerProps) {
     username: initial?.username || '',
     password: '',
   });
-  const [roleModal, setRoleModal] = useState(false);
-  const [roleName, setRoleName] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const set = (k: string, v: unknown) => setForm((f) => ({ ...f, [k]: v }));
-
-  const handleAddRole = () => {
-    if (!roleName.trim()) return;
-    const r = addRole(roleName.trim());
-    set('roleId', r.id);
-    setRoleName(''); setRoleModal(false);
-  };
 
   const [saving, setSaving] = useState(false);
 
@@ -63,7 +53,6 @@ export function CreateWorker({ initial, onClose }: CreateWorkerProps) {
     const errs: Record<string, string> = {};
     if (!form.fullName.trim()) errs.fullName = 'Nom requis';
     if (!form.phone.trim()) errs.phone = 'Téléphone requis';
-    if (!form.roleId) errs.roleId = 'Rôle requis';
     const needsNewAccount = form.hasAccount && !initial?.authUserId;
     if (form.hasAccount) {
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) errs.email = 'Email valide requis';
@@ -138,11 +127,6 @@ export function CreateWorker({ initial, onClose }: CreateWorkerProps) {
           <Input label={t('birthday')} type="date" value={form.birthday} onChange={(e) => set('birthday', e.target.value)} />
           <Input label={t('idCard')} value={form.idCardNumber} onChange={(e) => set('idCardNumber', e.target.value)} />
           <Input label={`${t('phone')} *`} value={form.phone} onChange={(e) => set('phone', e.target.value)} error={errors.phone} />
-          <div className="flex items-end gap-2">
-            <Select label={`${t('role')} *`} value={form.roleId} onChange={(e) => set('roleId', e.target.value)} placeholder="—"
-              options={roles.map((r) => ({ value: r.id, label: r.name }))} error={errors.roleId} className="flex-1" />
-            <Button type="button" variant="secondary" size="icon" onClick={() => setRoleModal(true)}><Plus size={16} /></Button>
-          </div>
           <Input label={`${t('startDate')} *`} type="date" value={form.startDate} onChange={(e) => set('startDate', e.target.value)} />
         </div>
       </section>
@@ -203,15 +187,6 @@ export function CreateWorker({ initial, onClose }: CreateWorkerProps) {
         <Button variant="gold" onClick={handleSubmit} disabled={saving}>{saving ? '…' : t('save')}</Button>
       </div>
 
-      <Modal open={roleModal} onClose={() => setRoleModal(false)} title={t('newRole')} size="sm">
-        <div className="space-y-4">
-          <Input label={t('name')} value={roleName} onChange={(e) => setRoleName(e.target.value)} autoFocus />
-          <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={() => setRoleModal(false)}>{t('cancel')}</Button>
-            <Button variant="gold" onClick={handleAddRole}>{t('add')}</Button>
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 }

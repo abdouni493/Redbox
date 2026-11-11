@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import type { CaisseTransaction, CaisseTransactionType } from '@/types';
 import { uid } from '@/lib/utils';
 import { getCurrentUsername } from './authStore';
+import { getActiveSessionId } from './cashSessionStore';
 
 interface CaisseState {
   transactions: CaisseTransaction[];
@@ -38,6 +39,7 @@ export const useCaisseStore = create<CaisseState>()(
           description,
           createdAt: new Date().toISOString(),
           createdBy: getCurrentUsername(),
+          sessionId: getActiveSessionId(),
         };
         set({ transactions: [tx, ...get().transactions] });
         return tx;

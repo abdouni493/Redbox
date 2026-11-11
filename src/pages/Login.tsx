@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Pizza, Lock, User, Mail, ChevronDown, Eye, EyeOff, Sandwich } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { homePathFor } from '@/lib/home';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -43,7 +44,7 @@ export default function Login() {
     const ok = login({ identifier, password });
     if (ok) {
       toast.success(t('welcome') + ' 👋');
-      navigate('/dashboard');
+      navigate(homePathFor(useAuthStore.getState().user));
     } else {
       setShake(true);
       setTimeout(() => setShake(false), 500);

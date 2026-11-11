@@ -13,7 +13,7 @@ import { WorkerPermissions } from './WorkerPermissions';
 import { WorkerAcompte } from './WorkerAcompte';
 import { WorkerAbsence } from './WorkerAbsence';
 import { WorkerPayment } from './WorkerPayment';
-import { useWorkerStore } from '@/store/workerStore';
+import { useWorkerStore, POST_LABELS } from '@/store/workerStore';
 import { useLanguage } from '@/hooks/useLanguage';
 import { usePermissions } from '@/hooks/usePermissions';
 import { formatCurrency, formatDate } from '@/lib/utils';
@@ -53,7 +53,10 @@ export default function WorkersPage() {
                 <div className="h-12 w-12 rounded-full bg-gradient-button flex items-center justify-center text-white font-semibold shadow-gold">{w.fullName.split(' ').map((n) => n[0]).slice(0, 2).join('')}</div>
                 <div className="min-w-0">
                   <h3 className="font-display font-semibold text-text-primary truncate">{w.fullName}</h3>
-                  <Badge variant="gold">{roleName(w.roleId)}</Badge>
+                  <div className="flex flex-wrap gap-1">
+                    <Badge variant="gold">{roleName(w.roleId)}</Badge>
+                    {w.post && w.post !== 'general' && <Badge variant="info">{POST_LABELS[w.post]}</Badge>}
+                  </div>
                 </div>
               </div>
               <div className="space-y-1 text-sm text-text-muted mb-3">
@@ -108,6 +111,7 @@ export default function WorkersPage() {
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <Detail label={t('role')} value={roleName(active.roleId)} />
+              <Detail label="Poste" value={POST_LABELS[active.post || 'general']} />
               <Detail label={t('phone')} value={active.phone} />
               <Detail label={t('birthday')} value={formatDate(active.birthday, language)} />
               <Detail label={t('idCard')} value={active.idCardNumber || '—'} />

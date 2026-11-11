@@ -77,6 +77,7 @@ export const useAuthStore = create<AuthState>()(
             role: 'worker',
             permissions: worker.permissions,
             workerId: worker.id,
+            post: worker.post,
           };
           set({ user: wUser, isAuthenticated: true });
           return true;

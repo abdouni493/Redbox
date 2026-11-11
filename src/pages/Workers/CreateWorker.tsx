@@ -1,15 +1,22 @@
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Settings2, ChefHat, Wallet, Bike } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Switch } from '@/components/ui/Switch';
 import { Modal } from '@/components/ui/Modal';
-import { useWorkerStore } from '@/store/workerStore';
+import { useWorkerStore, permissionsForPost } from '@/store/workerStore';
 import { useLanguage } from '@/hooks/useLanguage';
 import { toast } from '@/components/ui/Toast';
 import { todayISO } from '@/lib/utils';
-import type { Worker } from '@/types';
+import type { Worker, WorkerPost } from '@/types';
+
+const POSTS: { key: WorkerPost; label: string; desc: string; icon: typeof ChefHat }[] = [
+  { key: 'general', label: 'Général', desc: 'Permissions configurées manuellement', icon: Settings2 },
+  { key: 'kitchen', label: 'Cuisine', desc: 'Interface Commandes : voir + imprimer, sans modifier ni supprimer', icon: ChefHat },
+  { key: 'cashier', label: 'Caissier', desc: 'Point de vente + Commandes. Doit ouvrir la caisse avant de travailler', icon: Wallet },
+  { key: 'deliverer', label: 'Livreur', desc: 'Commandes à livrer qui lui sont assignées, avec adresses', icon: Bike },
+];
 
 interface CreateWorkerProps {
   initial?: Worker | null;
@@ -18,7 +25,7 @@ interface CreateWorkerProps {
 
 export function CreateWorker({ initial, onClose }: CreateWorkerProps) {
   const { t } = useLanguage();
-  const { roles, addRole, addWorker, updateWorker } = useWorkerStore();
+  const { roles, addRole, addWorker, updateWorker, setPermissions } = useWorkerStore();
 
   const [form, setForm] = useState({
     fullName: initial?.fullName || '',
@@ -26,6 +33,7 @@ export function CreateWorker({ initial, onClose }: CreateWorkerProps) {
     idCardNumber: initial?.idCardNumber || '',
     phone: initial?.phone || '',
     roleId: initial?.roleId || '',
+    post: (initial?.post || 'general') as WorkerPost,
     startDate: initial?.startDate || todayISO(),
     paymentEnabled: initial?.paymentEnabled ?? true,
     paymentType: initial?.paymentType || 'monthly',
@@ -56,8 +64,13 @@ export function CreateWorker({ initial, onClose }: CreateWorkerProps) {
     setErrors(errs);
     if (Object.keys(errs).length) return;
 
+    if (form.post !== 'general' && !form.hasAccount) {
+      toast.warning('Astuce : activez le compte de connexion pour que cet employé accède à son interface.');
+    }
     if (initial) {
       updateWorker(initial.id, { ...form, paymentType: form.paymentType as 'monthly' | 'daily', paymentAmount: Number(form.paymentAmount) });
+      // Changing the post applies its default interfaces
+      if (form.post !== (initial.post || 'general')) setPermissions(initial.id, permissionsForPost(form.post, initial.permissions));
       toast.success('Employé modifié');
     } else {
       addWorker({ ...form, paymentType: form.paymentType as 'monthly' | 'daily', paymentAmount: Number(form.paymentAmount) });
@@ -85,7 +98,28 @@ export function CreateWorker({ initial, onClose }: CreateWorkerProps) {
       </section>
 
       <section className="bg-vanilla/30 rounded-xl p-4 border border-gold/15 space-y-3">
-        <h3 className="font-display font-semibold text-text-primary">2. {t('payment')}</h3>
+        <h3 className="font-display font-semibold text-text-primary">2. Poste de travail</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {POSTS.map((p) => {
+            const Icon = p.icon;
+            const active = form.post === p.key;
+            return (
+              <button key={p.key} type="button" onClick={() => set('post', p.key)}
+                className={`flex items-start gap-3 text-left rounded-xl border p-3 transition-all ${active ? 'border-gold bg-gold/10 ring-2 ring-gold/25' : 'border-gold/15 bg-white/60 hover:bg-gold/5'}`}>
+                <div className={`h-9 w-9 rounded-lg flex items-center justify-center shrink-0 ${active ? 'bg-gradient-button text-white' : 'bg-vanilla text-gold-dark'}`}><Icon size={18} /></div>
+                <div>
+                  <p className="text-sm font-semibold text-text-primary">{p.label}</p>
+                  <p className="text-xs text-text-muted">{p.desc}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        {form.post !== 'general' && <p className="text-xs text-text-muted">Les interfaces de ce poste sont attribuées automatiquement (modifiables ensuite via « Permissions »).</p>}
+      </section>
+
+      <section className="bg-vanilla/30 rounded-xl p-4 border border-gold/15 space-y-3">
+        <h3 className="font-display font-semibold text-text-primary">3. {t('payment')}</h3>
         <Switch checked={form.paymentEnabled} onChange={(v) => set('paymentEnabled', v)} label={t('salaryEnabled')} />
         {form.paymentEnabled && (
           <div className="flex flex-wrap items-end gap-3">
@@ -97,7 +131,7 @@ export function CreateWorker({ initial, onClose }: CreateWorkerProps) {
       </section>
 
       <section className="bg-vanilla/30 rounded-xl p-4 border border-gold/15 space-y-3">
-        <h3 className="font-display font-semibold text-text-primary">3. Compte de connexion</h3>
+        <h3 className="font-display font-semibold text-text-primary">4. Compte de connexion</h3>
         <Switch checked={form.hasAccount} onChange={(v) => set('hasAccount', v)} label={t('accountActive')} />
         {form.hasAccount && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -106,7 +140,7 @@ export function CreateWorker({ initial, onClose }: CreateWorkerProps) {
             <Input label={t('password')} type="text" value={form.password} onChange={(e) => set('password', e.target.value)} />
           </div>
         )}
-        {form.hasAccount && <p className="text-xs text-text-muted">Le compte est créé sans permissions — configurez-les via le bouton « Permissions ».</p>}
+        {form.hasAccount && form.post === 'general' && <p className="text-xs text-text-muted">Le compte est créé sans permissions — configurez-les via le bouton « Permissions ».</p>}
       </section>
 
       <div className="flex justify-end gap-3">

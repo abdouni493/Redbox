@@ -245,7 +245,7 @@ export default function Dashboard() {
                     <p className="text-xs opacity-90">{dueText} · {cmd.items.length} articles · Reste à payer: {formatCurrency(cmd.restAmount)}</p>
                   </div>
                 </div>
-                <Button size="sm" variant={isOverdue ? 'rose' : 'gold'} onClick={() => navigate('/clients/commands')}>Gérer</Button>
+                <Button size="sm" variant={isOverdue ? 'rose' : 'gold'} onClick={() => navigate('/commands')}>Gérer</Button>
               </motion.div>
             );
           })}

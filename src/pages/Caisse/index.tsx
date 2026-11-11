@@ -5,7 +5,8 @@ import {
   Wallet, Plus, Minus, ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown,
   ShoppingCart, Banknote, Receipt, HardHat, CakeSlice, Store, Package,
   Pencil, Trash2, Calendar, PiggyBank, Coins, ArrowRightLeft, FileText,
-  ChevronDown, ChevronUp, Tag
+  ChevronDown, ChevronUp, Tag,
+  Users,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/Button';
@@ -250,6 +251,7 @@ export default function CaissePage() {
         actions={
           <div className="flex flex-wrap gap-2">
             <Button variant="secondary" onClick={() => navigate('/caisse/reports')}><FileText size={18} /> {t('caisseReports')}</Button>
+            <Button variant="secondary" onClick={() => navigate('/caisse/reports?tab=workers')}><Users size={18} /> Caisses par employé</Button>
             {can('caisse', 'create') && (
               <Button variant="mint" onClick={openDeposit}><Plus size={18} /> {t('newDeposit')}</Button>
             )}

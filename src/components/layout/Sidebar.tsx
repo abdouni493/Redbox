@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   LayoutDashboard, Boxes, ShoppingCart, CookingPot, Sandwich, CreditCard,
-  Receipt, Users, Truck, UserCog, Banknote, Wallet, TrendingUp, Settings, LogOut, X
+  Receipt, Users, Truck, UserCog, Banknote, Wallet, TrendingUp, Settings, LogOut, X, ClipboardList
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -27,6 +27,7 @@ const navItems: NavItem[] = [
   { to: '/production', key: 'production', module: 'production', icon: CookingPot },
   { to: '/comptoir', key: 'comptoir', module: 'comptoir', icon: Sandwich },
   { to: '/pos', key: 'pos', module: 'pos', icon: CreditCard },
+  { to: '/commands', key: 'commands', module: 'commands', icon: ClipboardList },
   { to: '/sales', key: 'sales', module: 'sales', icon: Receipt },
   { to: '/clients', key: 'clients', module: 'clients', icon: Users },
   { to: '/suppliers', key: 'suppliers', module: 'suppliers', icon: Truck },

@@ -29,8 +29,12 @@ export const useSalesStore = create<SalesState>()(
       sales: [],
 
       nextReference: () => {
-        const n = get().sales.length + 1;
-        return `VTE-${String(n).padStart(3, '0')}`;
+        // Highest existing number + 1 (robust to deletions)
+        const max = get().sales.reduce((m, x) => {
+          const n = parseInt(String(x.reference || '').replace(/\D/g, ''), 10);
+          return Number.isFinite(n) && n > m ? n : m;
+        }, 0);
+        return `VTE-${String(max + 1).padStart(3, '0')}`;
       },
 
       addSale: ({ clientId, date, products, reduction, paidAmount, fromCommandId, ...service }) => {

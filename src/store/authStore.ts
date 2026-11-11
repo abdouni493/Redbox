@@ -4,6 +4,7 @@ import type { User, CreateAccountData, Lang, WorkerPermissions } from '@/types';
 import { supabase } from '@/lib/supabase';
 import { loadSettings, startCloudSync, stopCloudSync } from '@/lib/cloudSync';
 import { useWorkerStore } from './workerStore';
+import { toast } from '@/components/ui/Toast';
 
 type Result = { ok: boolean; error?: string };
 
@@ -175,7 +176,10 @@ export const useAuthStore = create<AuthState>()(
         logout: async () => {
           workerUnsub?.();
           workerUnsub = null;
-          await stopCloudSync();
+          const unsent = await stopCloudSync();
+          if (unsent > 0) {
+            toast.warning(`${unsent} modification(s) pas encore envoyée(s) — elles seront enregistrées à la prochaine connexion sur cet appareil.`);
+          }
           await supabase.auth.signOut();
           set({ user: null, isAuthenticated: false });
           loadSettings();

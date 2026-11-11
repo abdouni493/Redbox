@@ -52,8 +52,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
   const visibleItems = navItems.filter((item) => canView(item.module));
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    // Waits until pending changes are written to Supabase before leaving.
+    await logout();
     navigate('/login');
   };
 

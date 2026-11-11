@@ -6,8 +6,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// Unique id for every record. 16 random hex chars (64 bits) so records
+// created at the same time on different devices never share an id (a shared
+// id would make one record overwrite the other in Supabase).
 export function uid(prefix = 'id') {
-  return `${prefix}-${uuidv4().slice(0, 8)}`;
+  return `${prefix}-${uuidv4().replace(/-/g, '').slice(0, 16)}`;
 }
 
 // Format currency: "1 550,00 DA"
